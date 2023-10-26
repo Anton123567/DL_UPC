@@ -8,15 +8,7 @@ class RNN(nn.Module):
                  hidden_units: int,
                  output_shape: int):
         super().__init__()
-
-        self.res_block_1 = BasicBlock(in_channels=input_shape,
-                                        out_channels=hidden_units, stride=1, is_first_block=True)
-
-
-        self.res_block_2 = BasicBlock(in_channels=hidden_units,
-                                       out_channels=hidden_units, stride=1, is_first_block=False)
-
-        """old:
+        
         self.conv_block_1 = nn.Sequential(
             nn.Conv2d(in_channels=input_shape,
                       out_channels=hidden_units,
@@ -25,7 +17,7 @@ class RNN(nn.Module):
                       padding=1),
             nn.ReLU(),
             nn.Conv2d(in_channels=hidden_units,
-                      out_channels=hidden_units,
+                      out_channels=hidden_units*2,
                       kernel_size=5,
                       stride=1,
                       padding=1),
@@ -33,38 +25,54 @@ class RNN(nn.Module):
             nn.MaxPool2d(kernel_size=2)
         )
 
-        self.conv_block_2 = nn.Sequential(
-            nn.Conv2d(in_channels=hidden_units,
-                      out_channels=hidden_units,
-                      kernel_size=3,
-                      stride=1,
-                      padding=1),
-            nn.ReLU(),
-            nn.Dropout2d(p=0.05),
-            nn.Conv2d(in_channels=hidden_units,
-                      out_channels=hidden_units,
-                      kernel_size=3,
-                      stride=1,
-                      padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
-            nn.Dropout2d(p=0.05)
-        )
-        """
+        self.res_block_1 = nn.Sequential(
+        			        BasicBlock(in_channels=hidden_units*2,
+                                       out_channels=hidden_units*2, stride=1, is_first_block=False),
+                            BasicBlock(in_channels=hidden_units*2,
+                                       out_channels=hidden_units*2, stride=1, is_first_block=False),
+                            BasicBlock(in_channels=hidden_units*2,
+                                       out_channels=hidden_units*2, stride=1, is_first_block=False),
+                                       )
 
+        self.res_block_2 = nn.Sequential(
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
+        )
+        self.res_block_3 = nn.Sequential(
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
+        )
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(in_features=hidden_units * 62 * 62,
+            nn.Linear(in_features=hidden_units*2,
+                      out_features=20),
+            nn.Linear(in_features=20,
                       out_features=output_shape))
 
     def forward(self, x):
         x = self.conv_block_1(x)
-        # print(f"After 1. block: {x.shape}")
-        x = self.conv_block_2(x)
-        # print(f"After 2. block: {x.shape}")
+        print(f"After 1. block: {x.shape}")
+        x = self.res_block_1(x)
+        print(f"After res block: {x.shape}")
+        x = self.res_block_2(x)
+        print(f"After res block: {x.shape}")
+        x = self.res_block_3(x)
+        print(f"After res block: {x.shape}")
+        x = self.avgpool(x)
+        print(f"After avgpool: {x.shape}")
         x = self.classifier(x)
-        # print(f"After classifier: {x.shape}")
+        print(f"After classifier: {x.shape}")
         return x
 
 

@@ -17,6 +17,7 @@ from tqdm.auto import tqdm
 import zipfile
 
 from cdataset import CustomDataset
+import Netclasses
 
 if __name__ == '__main__':
 
@@ -26,21 +27,21 @@ if __name__ == '__main__':
     RESIZE = 64
     LR = 0.001
     
-    if not os.path.exists('./../DataProcessed/data_256'):
+    if not os.path.exists('./../../DataProcessed/data_256'):
         # Step 1: Extract the dataset
         print("Extracting dataset...")
-        with zipfile.ZipFile('./../data_256.zip', 'r') as zip_ref:
-            zip_ref.extractall('./../DataProcessed')
+        with zipfile.ZipFile('./../../data_256.zip', 'r') as zip_ref:
+            zip_ref.extractall('./../../DataProcessed')
 
     # DATASET DF SETUP
-    dataset = pd.read_csv("./../DataMeta/MAMe_dataset.csv")
-    labels = pd.read_csv("./../DataMeta/MAMe_labels.csv", header=None)
-    toy_data = pd.read_csv("./../DataMeta/MAMe_toy_dataset.csv")
+    dataset = pd.read_csv("./../../DataMeta/MAMe_dataset.csv")
+    labels = pd.read_csv("./../../DataMeta/MAMe_labels.csv", header=None)
+    toy_data = pd.read_csv("./../../DataMeta/MAMe_toy_dataset.csv")
 
     important = dataset[["Image file", "Subset", "Medium"]]
     important = important.rename(columns={"Medium": "label"})
     important = important.rename(columns={"Image file": "file_path"})
-    important["file_path"] = important["file_path"].apply(lambda x: "./../DataProcessed/data_256/" + str(x))
+    important["file_path"] = important["file_path"].apply(lambda x: "./../../DataProcessed/data_256/" + str(x))
 
     print("Mapping labels...")
     label_mapper = labels.to_dict()[1]
@@ -55,8 +56,8 @@ if __name__ == '__main__':
 
     print("Creating train, val, test dfs...")
 
-    train_df = important[important['Subset'] == 'train']
-    val_df = important[important['Subset'] == 'val']
+    train_df = important[important['Subset'] == 'train'][:1]
+    val_df = important[important['Subset'] == 'val'][:1]
     test_df = important[important['Subset'] == 'test']
 
     train_df = train_df.reset_index(drop=True)
@@ -219,7 +220,7 @@ if __name__ == '__main__':
     # Set number of epochs
     NUM_EPOCHS = 200
 
-    model = CNN(input_shape = 3,
+    model = Netclasses.RNN(input_shape = 3,
                   hidden_units= 10,
                   output_shape= len(label_mapper)).to(device)
 
