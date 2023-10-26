@@ -24,8 +24,8 @@ if __name__ == '__main__':
     BATCH_SIZE = 8
     NUM_WORKERS = os.cpu_count()
     RESIZE = 64
-    LR = 0.001 #change in the training part!
-
+    LR = 0.001
+    
     if not os.path.exists('./../DataProcessed/data_256'):
         # Step 1: Extract the dataset
         print("Extracting dataset...")
@@ -225,7 +225,7 @@ if __name__ == '__main__':
 
     # Setup loss function and optimizer
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(params=model.parameters(), lr=0.002)
+    optimizer = torch.optim.Adam(params=model.parameters(), lr= LR)
 
     results = {'epoch': [], 'train_loss': [], 'train_acc': [],
                    'val_loss': [], 'val_acc': []}
