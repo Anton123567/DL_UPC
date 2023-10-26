@@ -56,8 +56,8 @@ if __name__ == '__main__':
 
     print("Creating train, val, test dfs...")
 
-    train_df = important[important['Subset'] == 'train'][:1]
-    val_df = important[important['Subset'] == 'val'][:1]
+    train_df = important[important['Subset'] == 'train']
+    val_df = important[important['Subset'] == 'val']
     test_df = important[important['Subset'] == 'test']
 
     train_df = train_df.reset_index(drop=True)
