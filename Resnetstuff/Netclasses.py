@@ -62,17 +62,17 @@ class RNN(nn.Module):
 
     def forward(self, x):
         x = self.conv_block_1(x)
-        print(f"After 1. block: {x.shape}")
+        #print(f"After 1. block: {x.shape}")
         x = self.res_block_1(x)
-        print(f"After res block: {x.shape}")
+        #print(f"After res block: {x.shape}")
         x = self.res_block_2(x)
-        print(f"After res block: {x.shape}")
+        #print(f"After res block: {x.shape}")
         x = self.res_block_3(x)
-        print(f"After res block: {x.shape}")
+        #print(f"After res block: {x.shape}")
         x = self.avgpool(x)
-        print(f"After avgpool: {x.shape}")
+        #print(f"After avgpool: {x.shape}")
         x = self.classifier(x)
-        print(f"After classifier: {x.shape}")
+        #print(f"After classifier: {x.shape}")
         return x
 
 
