@@ -24,8 +24,7 @@ if __name__ == '__main__':
     # (HYPER)PARAMETERS
     BATCH_SIZE = 8
     NUM_WORKERS = os.cpu_count()
-    RESIZE = 64
-    LR = 0.001
+    LR = 0.003
     
     if not os.path.exists('./../DataProcessed/data_256'):
         # Step 1: Extract the dataset
@@ -150,7 +149,7 @@ if __name__ == '__main__':
         #train_loss after 1 epoch: sum of train losses for each batch / number of batches
         train_loss /= len(data_loader)
         train_acc /= len(data_loader)
-        print(f"Train loss: {train_loss: .5f} | Train acc: {train_acc: .2f} %")
+        #print(f"Train loss: {train_loss: .5f} | Train acc: {train_acc: .2f} %")
 
         return train_loss, train_acc
 
@@ -218,7 +217,7 @@ if __name__ == '__main__':
 
 
     # Set number of epochs
-    NUM_EPOCHS = 200
+    NUM_EPOCHS = 50
 
     model = Netclasses.RNN(input_shape = 3,
                   hidden_units= 10,
