@@ -26,32 +26,36 @@ class RNN(nn.Module):
         )
 
         self.res_block_1 = nn.Sequential(
-        			        BasicBlock(in_channels=hidden_units*2,
-                                       out_channels=hidden_units*2, stride=1, is_first_block=False),
-                            BasicBlock(in_channels=hidden_units*2,
-                                       out_channels=hidden_units*2, stride=1, is_first_block=False),
-                            BasicBlock(in_channels=hidden_units*2,
-                                       out_channels=hidden_units*2, stride=1, is_first_block=False),
-                                       )
+            nn.BatchNorm2d(hidden_units*2),
+            BasicBlock(in_channels=hidden_units*2,
+                       out_channels=hidden_units*2, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units*2,
+                       out_channels=hidden_units*2, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units*2,
+                       out_channels=hidden_units*2, stride=1, is_first_block=False),
+            nn.Dropout2d(p=0.05),
+                       )
 
         self.res_block_2 = nn.Sequential(
+            nn.BatchNorm2d(hidden_units * 2),
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
-	    nn.Dropout2D(p=0.05),
-        )
+            nn.Dropout2d(p=0.05),
+            )
         self.res_block_3 = nn.Sequential(
+            nn.BatchNorm2d(hidden_units * 2),
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
-            nn.Dropout2D(p=0.05),
-	)
+            nn.Dropout2d(p=0.05),
+	        )
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
