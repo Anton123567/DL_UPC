@@ -217,7 +217,7 @@ if __name__ == '__main__':
 
 
     # Set number of epochs
-    NUM_EPOCHS = 50
+    NUM_EPOCHS = 60
 
     model = Netclasses.RNN(input_shape = 3,
                   hidden_units= 10,

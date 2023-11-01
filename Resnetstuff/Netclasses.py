@@ -41,6 +41,7 @@ class RNN(nn.Module):
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
+	    nn.Dropout2D(p=0.05),
         )
         self.res_block_3 = nn.Sequential(
             BasicBlock(in_channels=hidden_units * 2,
@@ -49,7 +50,8 @@ class RNN(nn.Module):
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
-        )
+            nn.Dropout2D(p=0.05),
+	)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
@@ -57,6 +59,7 @@ class RNN(nn.Module):
             nn.Flatten(),
             nn.Linear(in_features=hidden_units*2,
                       out_features=20),
+	    nn.Dropout(p=0.1),
             nn.Linear(in_features=20,
                       out_features=output_shape))
 
