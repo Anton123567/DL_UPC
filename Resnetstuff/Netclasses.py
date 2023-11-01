@@ -66,6 +66,8 @@ class RNN(nn.Module):
         x = self.res_block_1(x)
         #print(f"After res block: {x.shape}")
         x = self.res_block_2(x)
+        x = self.res_block_2(x)
+        x = self.res_block_2(x)
         #print(f"After res block: {x.shape}")
         x = self.res_block_3(x)
         #print(f"After res block: {x.shape}")
