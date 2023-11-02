@@ -230,12 +230,7 @@ if __name__ == '__main__':
     results = {'epoch': [], 'train_loss': [], 'train_acc': [],
                    'val_loss': [], 'val_acc': []}
 
-
-    # train_loss = []
-    # train_acc = []
-    # val_loss = []
-    # val_acc = []
-    # num_epochs = []
+    best_acc = 0.0
 
     for epoch in tqdm(range(NUM_EPOCHS)):
         print(f"Epoch: {epoch} \n --------")
@@ -263,8 +258,12 @@ if __name__ == '__main__':
         data_frame = data_frame.set_index('epoch')
         data_frame.to_csv('./results/results.csv')
 
-    data_frame.plot()
-    plt.savefig("./results/training.png")
+        if valid_acc > best_acc:
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+            },  '/results/model_cpt.pth')
 
 
 
