@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # (HYPER)PARAMETERS
     BATCH_SIZE = 8
     NUM_WORKERS = os.cpu_count()
-    LR = 0.003
+    LR = 0.005
     
     if not os.path.exists('./../DataProcessed/data_256'):
         # Step 1: Extract the dataset
@@ -263,7 +263,7 @@ if __name__ == '__main__':
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-            },  '/results/model_cpt.pth')
+            },  './results/model_cpt.pth')
 
 
 
