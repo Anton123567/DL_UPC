@@ -14,13 +14,15 @@ class RNN(nn.Module):
                       out_channels=hidden_units,
                       kernel_size=7,
                       stride=1,
-                      padding=1),
+                      padding='same',
+                      padding_mode='reflect'),
             nn.ReLU(),
             nn.Conv2d(in_channels=hidden_units,
                       out_channels=hidden_units*2,
                       kernel_size=5,
                       stride=1,
-                      padding=1),
+                      padding='same',
+                      padding_mode='reflect'),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2)
         )
@@ -33,8 +35,7 @@ class RNN(nn.Module):
                        out_channels=hidden_units*2, stride=1, is_first_block=False),
             BasicBlock(in_channels=hidden_units*2,
                        out_channels=hidden_units*2, stride=1, is_first_block=False),
-            nn.Dropout2d(p=0.05),
-                       )
+            )
 
         self.res_block_2 = nn.Sequential(
             nn.BatchNorm2d(hidden_units * 2),
@@ -44,7 +45,6 @@ class RNN(nn.Module):
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
-            nn.Dropout2d(p=0.05),
             )
         self.res_block_3 = nn.Sequential(
             nn.BatchNorm2d(hidden_units * 2),
@@ -54,8 +54,7 @@ class RNN(nn.Module):
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
-            nn.Dropout2d(p=0.05),
-	        )
+	    )
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
@@ -63,7 +62,7 @@ class RNN(nn.Module):
             nn.Flatten(),
             nn.Linear(in_features=hidden_units*2,
                       out_features=20),
-	    nn.Dropout(p=0.1),
+            nn.Dropout(p=0.5),
             nn.Linear(in_features=20,
                       out_features=output_shape))
 
@@ -106,16 +105,20 @@ class BasicBlock(nn.Module):
                                out_channels=out_channels,
                                kernel_size=3,
                                stride=stride,
-                               padding=1)
+                               padding='same',
+                               padding_mode='reflect')
         self.bn1 = nn.BatchNorm2d(out_channels)
         self.conv2 = nn.Conv2d(in_channels=out_channels,
                                out_channels=out_channels,
                                kernel_size=3,
                                stride=1,
-                               padding=1)
+                               padding='same',
+                               padding_mode='reflect')
         self.bn2 = nn.BatchNorm2d(out_channels)
 
         self.relu = nn.ReLU()
+        self.dropout = nn.Dropout2d(p=0.05)
+
 
         # Skip connection goes through 1x1 convolution with stride=2 for
         # the first blocks of conv3_x, conv4_x, and conv5_x layers for matching
@@ -146,6 +149,7 @@ class BasicBlock(nn.Module):
             identity = self.downsample(identity)
         x += identity
         x = self.relu(x)
+        x = self.dropout(x)
 
         return x
 
