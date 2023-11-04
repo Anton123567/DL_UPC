@@ -23,7 +23,7 @@ if __name__ == '__main__':
     # (HYPER)PARAMETERS
     BATCH_SIZE = 32 #changed from 8!
     NUM_WORKERS = os.cpu_count()
-    LR = 0.001
+    LR = 0.01
     
     if not os.path.exists('./../DataProcessed/data_256'):
         # Step 1: Extract the dataset

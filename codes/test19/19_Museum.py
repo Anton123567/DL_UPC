@@ -11,6 +11,7 @@ from torchvision import transforms
 from torch import nn
 
 import os
+from skimage import io, transform
 import tqdm
 from tqdm.auto import tqdm
 import zipfile
@@ -21,8 +22,9 @@ import Netclasses
 if __name__ == '__main__':
 
     # (HYPER)PARAMETERS
-    BATCH_SIZE = 32 #changed from 8!
+    BATCH_SIZE = 8
     NUM_WORKERS = os.cpu_count()
+    RESIZE = 64
     LR = 0.001
     
     if not os.path.exists('./../DataProcessed/data_256'):
@@ -216,10 +218,10 @@ if __name__ == '__main__':
 
 
     # Set number of epochs
-    NUM_EPOCHS = 60
+    NUM_EPOCHS = 50
 
     model = Netclasses.RNN(input_shape = 3,
-                  hidden_units= 16, #changed!
+                  hidden_units= 10,
                   output_shape= len(label_mapper)).to(device)
 
     # Setup loss function and optimizer
@@ -229,7 +231,12 @@ if __name__ == '__main__':
     results = {'epoch': [], 'train_loss': [], 'train_acc': [],
                    'val_loss': [], 'val_acc': []}
 
-    best_acc = 0.0
+
+    # train_loss = []
+    # train_acc = []
+    # val_loss = []
+    # val_acc = []
+    # num_epochs = []
 
     for epoch in tqdm(range(NUM_EPOCHS)):
         print(f"Epoch: {epoch} \n --------")
@@ -257,12 +264,8 @@ if __name__ == '__main__':
         data_frame = data_frame.set_index('epoch')
         data_frame.to_csv('./results/results.csv')
 
-        if valid_acc > best_acc:
-            torch.save({
-                'epoch': epoch,
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-            },  './results/model_cpt.pth')
+    data_frame.plot()
+    plt.savefig("./results/training.png")
 
 
 

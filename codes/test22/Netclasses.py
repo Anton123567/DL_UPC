@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 
+
+
 class BasicBlock(nn.Module):
     # Scale factor of the number of output channels
     expansion = 1
@@ -21,6 +23,7 @@ class BasicBlock(nn.Module):
                                kernel_size=3,
                                stride=stride,
                                padding=1)
+        self.dropout = nn.Dropout2d(p=0.05)
         self.conv2 = nn.Conv2d(in_channels=out_channels,
                                out_channels=out_channels,
                                kernel_size=3,
@@ -38,7 +41,7 @@ class BasicBlock(nn.Module):
             Residual block ouput
         """
         identity = x.clone()
-        x = self.conv2((self.conv1(x))) #conv -> dropout -> conv
+        x = self.conv2(self.dropout(self.conv1(x))) #conv -> dropout -> conv
         x = self.relu(x)
         x = self.bn2(x) # BN lecture: bn after relu is okay, if before use parameters
 
@@ -88,9 +91,6 @@ class RNN(nn.Module):
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
         )
-
-        self.dropout = nn.Dropout2d(p=0.05)
-
         self.res_block_3 = nn.Sequential(
             BasicBlock(in_channels=hidden_units * 2,
                        out_channels=hidden_units * 2, stride=1, is_first_block=False),
