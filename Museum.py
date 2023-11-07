@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 from torch.utils.data import Dataset, DataLoader
-from torchsummary import summary
 from torchvision import transforms
 from torch import nn
 
@@ -16,16 +15,18 @@ import tqdm
 from tqdm.auto import tqdm
 import zipfile
 
-from DL_UPC.codes.vis_models import create_model_vis
 from cdataset import CustomDataset
 import Netclasses
+
+from torch.optim.lr_scheduler import OneCycleLR, CosineAnnealingLR, CosineAnnealingWarmRestarts
+
 
 if __name__ == '__main__':
 
     # (HYPER)PARAMETERS
-    BATCH_SIZE = 32  # changed from 8!
+    BATCH_SIZE = 32 #changed from 8!
     NUM_WORKERS = os.cpu_count()
-    LR = 0.001
+    LR = 0.0001
 
     if not os.path.exists('./../DataProcessed/data_256'):
         # Step 1: Extract the dataset
@@ -49,10 +50,10 @@ if __name__ == '__main__':
     important["label"] = important["label"].map(label_mapper)
     important = important.dropna()
     important["label"].astype(int)
-    # number_classes = len(important["label"].drop_duplicates())
+    #number_classes = len(important["label"].drop_duplicates())
 
-    # important = pd.get_dummies(important, columns=["label"], prefix="label_")
-    # labels = [x for x in important.columns if "label" in x]
+    #important = pd.get_dummies(important, columns=["label"], prefix="label_")
+    #labels = [x for x in important.columns if "label" in x]
 
     print("Creating train, val, test dfs...")
 
@@ -64,15 +65,14 @@ if __name__ == '__main__':
     val_df = val_df.reset_index(drop=True)
     test_df = test_df.reset_index(drop=True)
 
-    print(
-        f"Train df of length {len(train_df)}, validation df of length {len(val_df)} and test df of length {len(test_df)} is created.")
+    print(f"Train df of length {len(train_df)}, validation df of length {len(val_df)} and test df of length {len(test_df)} is created.")
     print(f"Creating dataset and dataLoader with batch size {BATCH_SIZE} and {NUM_WORKERS} workers.")
 
-    # todo add more transformations for train and add normalization to both
+    #todo add more transformations for train and add normalization to both
 
     augmentations = [
         transforms.RandomHorizontalFlip(p=0.5),
-        # transforms.RandomRotation(10),  # Rotate the image by up to 10 degrees
+        transforms.RandomVerticalFlip(p=0.5),
         transforms.RandomResizedCrop(256, scale=(0.8, 1.0)),  # Random crop with resizing to 64x64
         transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)  # Random color jitter
     ]
@@ -80,15 +80,16 @@ if __name__ == '__main__':
     train_transform = transforms.Compose(augmentations + [
         transforms.Resize((256, 256)),
         transforms.ToTensor(),
-        # transforms.Normalize(mean=[0.3460, 0.3094, 0.2435], std=[0.2309, 0.2221, 0.2056])
-    ])
+        #transforms.Normalize(mean=[0.3460, 0.3094, 0.2435], std=[0.2309, 0.2221, 0.2056])
+        ])
     train_dataset = CustomDataset(train_df, train_transform)
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, num_workers=NUM_WORKERS, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size= BATCH_SIZE, num_workers=NUM_WORKERS, shuffle=True)
 
     val_transform = torchvision.transforms.Compose([
-        torchvision.transforms.ToTensor()])
+                                   transforms.Resize((256, 256)),
+                                   torchvision.transforms.ToTensor()])
     val_dataset = CustomDataset(val_df, val_transform)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, num_workers=NUM_WORKERS, shuffle=False)
+    val_loader = DataLoader(val_dataset, batch_size= BATCH_SIZE, num_workers=NUM_WORKERS, shuffle=False)
 
     # train_features, train_labels = next(iter(train_loader))
     # print(f"Feature batch shape: {train_features.size()}")
@@ -98,12 +99,13 @@ if __name__ == '__main__':
     print(f'Device is {device}.')
 
 
-    # train step is for ONE epoch
+    #train step is for ONE epoch
 
     def train_step(model: torch.nn.Module,
                    data_loader: torch.utils.data.DataLoader,
                    loss_fn: torch.nn.Module,
                    optimizer: torch.optim.Optimizer,
+                   scheduler,
                    accuracy_fn,
                    device: torch.device = device):
 
@@ -113,24 +115,24 @@ if __name__ == '__main__':
         model.train()
 
         # Add progress bar also for batches
-        tk0 = tqdm(data_loader, total=int(len(data_loader)))
+        tk0 = tqdm(data_loader, total= int(len(data_loader)))
 
         # Loop through the batches
-        for batch, (X, y) in enumerate(tk0):  # for len(train_dataloder) number of batches
-            # for each batch take X ([32,1,28,28]) and y ([32])
-            # given shapes are as it is in our example
+        for batch, (X,y) in enumerate(tk0): #for len(train_dataloder) number of batches
+                                                       #for each batch take X ([32,1,28,28]) and y ([32])
+                                                       #given shapes are as it is in our example
             # Put the data to target device
             y = y.long()
             X, y = X.to(device), y.to(device)
 
             # 1. Forward pass
-            y_pred = model(X)  # gives logits
+            y_pred = model(X) #gives logits
 
             # 2. Calculate the loss and accuracy PER batch
-            loss = loss_fn(y_pred, y)  # crossentrophy works with logits
-            train_loss += loss  # accumulate train loss (add the loss of the whole batch)
-            train_acc += accuracy_fn(y_true=y,
-                                     y_pred=y_pred.argmax(dim=1))  # from logits -> prediction labels
+            loss = loss_fn(y_pred, y) #crossentrophy works with logits
+            train_loss += loss #accumulate train loss (add the loss of the whole batch)
+            train_acc += accuracy_fn(y_true = y,
+                                    y_pred = y_pred.argmax(dim=1)) # from logits -> prediction labels
 
             # 3. Optimizer zero grad
             optimizer.zero_grad()
@@ -141,16 +143,19 @@ if __name__ == '__main__':
             # 5. Update model's parameters with optimizer - once *per batch*
             optimizer.step()
 
+            if scheduler is not None:
+                scheduler.step()
+
             # Print what's happening
-            # if batch % 400 == 0:
+            #if batch % 400 == 0:
             #  print(f"Looked at {batch * len(X)} / {len(data_loader.dataset)} samples.")
             # tk0.set_description('Train Epoch: [{}/{}] Loss: {:.4f} '
             #                       'Train Sup Acc: {:.4f}'.format(epoch, epochs, total_loss / total_num, acc))
 
-        # train_loss after 1 epoch: sum of train losses for each batch / number of batches
+        #train_loss after 1 epoch: sum of train losses for each batch / number of batches
         train_loss /= len(data_loader)
         train_acc /= len(data_loader)
-        # print(f"Train loss: {train_loss: .5f} | Train acc: {train_acc: .2f} %")
+        #print(f"Train loss: {train_loss: .5f} | Train acc: {train_acc: .2f} %")
 
         return train_loss, train_acc
 
@@ -158,10 +163,10 @@ if __name__ == '__main__':
     # define validation step
 
     def val_step(model: torch.nn.Module,
-                 data_loader: torch.utils.data.DataLoader,
-                 loss_fn: torch.nn.Module,
-                 accuracy_fn,
-                 device: torch.device = device):
+                  data_loader: torch.utils.data.DataLoader,
+                  loss_fn: torch.nn.Module,
+                  accuracy_fn,
+                  device: torch.device = device):
         val_loss, val_acc = 0, 0
 
         # Put model in eval mode
@@ -174,20 +179,24 @@ if __name__ == '__main__':
                 X, y = X.to(device), y.to(device)
 
                 # 1. Forward pass
-                val_pred = model(X)  # raw logits
+                val_pred = model(X) #raw logits
 
                 # 2. Calculate the loss
                 val_loss += loss_fn(val_pred, y)
 
-                val_acc += accuracy_fn(y_true=y,
-                                       y_pred=val_pred.argmax(dim=1))  # logits -> prediction labels
+                val_acc += accuracy_fn(y_true = y,
+                                       y_pred = val_pred.argmax(dim= 1)) # logits -> prediction labels
 
         val_loss /= len(data_loader)
-        val_acc /= len(data_loader)
+        val_acc  /= len(data_loader)
 
         print(f"Validation loss: {val_loss: .5f} | Validation acc: {val_acc: .2f} % \n")
 
         return val_loss, val_acc
+
+
+
+
 
 
     # IN ORDER TO CHECK INPUT-OUTPUT SIZES
@@ -195,6 +204,7 @@ if __name__ == '__main__':
     # model.eval()
     # with torch.inference_mode():
     #     model(train_features[0].unsqueeze(dim=0).to(device))
+
 
     # Calculate accuracy (a classification metric)
     def accuracy_fn(y_true, y_pred):
@@ -213,37 +223,44 @@ if __name__ == '__main__':
 
 
     # Set number of epochs
-    NUM_EPOCHS = 200
+    NUM_EPOCHS = 300
 
-    model = Netclasses.RNN(input_shape=3,
-                           hidden_units=16,  # changed!
-                           output_shape=len(label_mapper)).to(device)
+    model = Netclasses.RNN(input_shape = 3,
+                  hidden_units= 16, #changed!
+                  output_shape= len(label_mapper)).to(device)
 
-    with open("model.txt", "a") as f:
-        print(model, file=f)
     # Setup loss function and optimizer
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(params=model.parameters(), lr=LR)
+
+    optimizer = torch.optim.AdamW(model.parameters(), lr= LR, weight_decay=0.01)
+
+    #CosineAnnealingLR(optimizer,
+                                  # T_max=TOTAL_STEPS,  # Maximum number of iterations.
+                                  # eta_min=0)  # Minimum learning rate.
+
+
+
 
     results = {'epoch': [], 'train_loss': [], 'train_acc': [],
-               'val_loss': [], 'val_acc': []}
+                   'val_loss': [], 'val_acc': []}
 
     best_acc = 0.0
 
     for epoch in tqdm(range(NUM_EPOCHS)):
         print(f"Epoch: {epoch} \n --------")
-        training_loss, training_acc = train_step(model=model,
-                                                 data_loader=train_loader,
-                                                 loss_fn=loss_fn,
-                                                 optimizer=optimizer,
-                                                 accuracy_fn=accuracy_fn,
-                                                 device=device)
+        training_loss, training_acc = train_step(model= model,
+                                        data_loader = train_loader,
+                                        loss_fn = loss_fn,
+                                        optimizer = optimizer,
+                                        accuracy_fn = accuracy_fn,
+                                        scheduler=None,
+                                        device = device)
 
-        valid_loss, valid_acc = val_step(model=model,
-                                         data_loader=val_loader,
-                                         loss_fn=loss_fn,
-                                         accuracy_fn=accuracy_fn,
-                                         device=device)
+        valid_loss, valid_acc = val_step(model= model,
+                                      data_loader = val_loader,
+                                      loss_fn= loss_fn,
+                                      accuracy_fn= accuracy_fn,
+                                      device = device)
 
         results['epoch'].append(epoch)
         results['train_loss'].append(training_loss.cpu().detach().numpy())
@@ -261,7 +278,7 @@ if __name__ == '__main__':
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-            }, './results/model_cpt.pth')
+            },  './results/model_cpt.pth')
 
 
 

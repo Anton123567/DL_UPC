@@ -3,3 +3,7 @@
 *.sh
 results_all/.ipynb_checkpoints/Deep Learning Assignment-checkpoint.ipynb
 
+codes/__pycache__/
+results/model_cpt.pth
+runs/
+__pycache__/
