@@ -18,7 +18,7 @@ import zipfile
 from cdataset import CustomDataset
 import Netclasses
 
-from torch.optim.lr_scheduler import CosineAnnealingLR, CosineAnnealingWarmRestarts
+from torch.optim.lr_scheduler import OneCycleLR, CosineAnnealingLR, CosineAnnealingWarmRestarts
 
 
 if __name__ == '__main__':
@@ -236,7 +236,8 @@ if __name__ == '__main__':
     ITER_STEPS = 60 * len(train_loader)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=0.01)
-    scheduler = CosineAnnealingWarmRestarts(optimizer, T_0 = ITER_STEPS, T_mult= 1, eta_min=0.0001, last_epoch=-1)
+    scheduler = OneCycleLR(optimizer, 0.01, epochs= NUM_EPOCHS, steps_per_epoch=len(train_loader))
+
     #CosineAnnealingLR(optimizer,
                                   # T_max=TOTAL_STEPS,  # Maximum number of iterations.
                                   # eta_min=0)  # Minimum learning rate.

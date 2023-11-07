@@ -26,8 +26,8 @@ if __name__ == '__main__':
     # (HYPER)PARAMETERS
     BATCH_SIZE = 32 #changed from 8!
     NUM_WORKERS = os.cpu_count()
-    LR = 0.01
-    
+    LR = 0.001
+
     if not os.path.exists('./../DataProcessed/data_256'):
         # Step 1: Extract the dataset
         print("Extracting dataset...")
@@ -232,11 +232,7 @@ if __name__ == '__main__':
     # Setup loss function and optimizer
     loss_fn = nn.CrossEntropyLoss()
 
-    TOTAL_STEPS = NUM_EPOCHS * len(train_loader)
-    ITER_STEPS = 60 * len(train_loader)
-
-    optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=0.01)
-    scheduler = OneCycleLR(optimizer, 0.01, epochs= NUM_EPOCHS, steps_per_epoch=len(train_loader))
+    optimizer = torch.optim.AdamW(model.parameters(), lr= LR, weight_decay=0.01)
 
     #CosineAnnealingLR(optimizer,
                                   # T_max=TOTAL_STEPS,  # Maximum number of iterations.
@@ -256,7 +252,6 @@ if __name__ == '__main__':
                                         data_loader = train_loader,
                                         loss_fn = loss_fn,
                                         optimizer = optimizer,
-                                        scheduler= scheduler,
                                         accuracy_fn = accuracy_fn,
                                         device = device)
 

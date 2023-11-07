@@ -18,7 +18,7 @@ import zipfile
 from cdataset import CustomDataset
 import Netclasses
 
-from torch.optim.lr_scheduler import CosineAnnealingLR
+from torch.optim.lr_scheduler import CosineAnnealingLR, CosineAnnealingWarmRestarts
 
 
 if __name__ == '__main__':
@@ -223,7 +223,7 @@ if __name__ == '__main__':
 
 
     # Set number of epochs
-    NUM_EPOCHS = 60
+    NUM_EPOCHS = 240
 
     model = Netclasses.RNN(input_shape = 3,
                   hidden_units= 16, #changed!
@@ -233,11 +233,15 @@ if __name__ == '__main__':
     loss_fn = nn.CrossEntropyLoss()
 
     TOTAL_STEPS = NUM_EPOCHS * len(train_loader)
+    ITER_STEPS = 60 * len(train_loader)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=0.01)
-    scheduler = CosineAnnealingLR(optimizer,
-                                  T_max=TOTAL_STEPS,  # Maximum number of iterations.
-                                  eta_min=0)  # Minimum learning rate.
+    scheduler = CosineAnnealingWarmRestarts(optimizer, T_0 = ITER_STEPS, T_mult= 1, eta_min=0.0001, last_epoch=-1)
+    #CosineAnnealingLR(optimizer,
+                                  # T_max=TOTAL_STEPS,  # Maximum number of iterations.
+                                  # eta_min=0)  # Minimum learning rate.
+
+
 
 
     results = {'epoch': [], 'train_loss': [], 'train_acc': [],
