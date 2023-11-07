@@ -1,3 +1,5 @@
 .idea*
 .DS_Store
 *.sh
+results_all/.ipynb_checkpoints/Deep Learning Assignment-checkpoint.ipynb
+
