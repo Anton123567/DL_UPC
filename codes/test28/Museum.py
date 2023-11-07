@@ -26,7 +26,7 @@ if __name__ == '__main__':
     # (HYPER)PARAMETERS
     BATCH_SIZE = 32 #changed from 8!
     NUM_WORKERS = os.cpu_count()
-    LR = 0.001
+    LR = 0.0001
 
     if not os.path.exists('./../DataProcessed/data_256'):
         # Step 1: Extract the dataset
@@ -223,7 +223,7 @@ if __name__ == '__main__':
 
 
     # Set number of epochs
-    NUM_EPOCHS = 240
+    NUM_EPOCHS = 300
 
     model = Netclasses.RNN(input_shape = 3,
                   hidden_units= 16, #changed!
