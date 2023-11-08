@@ -18,13 +18,16 @@ import zipfile
 from cdataset import CustomDataset
 import Netclasses
 
+from torch.optim.lr_scheduler import OneCycleLR, CosineAnnealingLR, CosineAnnealingWarmRestarts
+
+
 if __name__ == '__main__':
 
     # (HYPER)PARAMETERS
     BATCH_SIZE = 32 #changed from 8!
     NUM_WORKERS = os.cpu_count()
-    LR = 0.001
-    
+    LR = 0.0001
+
     if not os.path.exists('./../DataProcessed/data_256'):
         # Step 1: Extract the dataset
         print("Extracting dataset...")
@@ -69,7 +72,7 @@ if __name__ == '__main__':
 
     augmentations = [
         transforms.RandomHorizontalFlip(p=0.5),
-        # transforms.RandomRotation(10),  # Rotate the image by up to 10 degrees
+        transforms.RandomVerticalFlip(p=0.5),
         transforms.RandomResizedCrop(256, scale=(0.8, 1.0)),  # Random crop with resizing to 64x64
         transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)  # Random color jitter
     ]
@@ -82,8 +85,8 @@ if __name__ == '__main__':
     train_dataset = CustomDataset(train_df, train_transform)
     train_loader = DataLoader(train_dataset, batch_size= BATCH_SIZE, num_workers=NUM_WORKERS, shuffle=True)
 
-
     val_transform = torchvision.transforms.Compose([
+                                   transforms.Resize((256, 256)),
                                    torchvision.transforms.ToTensor()])
     val_dataset = CustomDataset(val_df, val_transform)
     val_loader = DataLoader(val_dataset, batch_size= BATCH_SIZE, num_workers=NUM_WORKERS, shuffle=False)
@@ -102,6 +105,7 @@ if __name__ == '__main__':
                    data_loader: torch.utils.data.DataLoader,
                    loss_fn: torch.nn.Module,
                    optimizer: torch.optim.Optimizer,
+                   scheduler,
                    accuracy_fn,
                    device: torch.device = device):
 
@@ -138,6 +142,9 @@ if __name__ == '__main__':
 
             # 5. Update model's parameters with optimizer - once *per batch*
             optimizer.step()
+
+            if scheduler is not None:
+                scheduler.step()
 
             # Print what's happening
             #if batch % 400 == 0:
@@ -216,7 +223,7 @@ if __name__ == '__main__':
 
 
     # Set number of epochs
-    NUM_EPOCHS = 60
+    NUM_EPOCHS = 300
 
     model = Netclasses.RNN(input_shape = 3,
                   hidden_units= 16, #changed!
@@ -224,7 +231,15 @@ if __name__ == '__main__':
 
     # Setup loss function and optimizer
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(params=model.parameters(), lr= LR)
+
+    optimizer = torch.optim.AdamW(model.parameters(), lr= LR, weight_decay=0.01)
+
+    #CosineAnnealingLR(optimizer,
+                                  # T_max=TOTAL_STEPS,  # Maximum number of iterations.
+                                  # eta_min=0)  # Minimum learning rate.
+
+
+
 
     results = {'epoch': [], 'train_loss': [], 'train_acc': [],
                    'val_loss': [], 'val_acc': []}
@@ -238,6 +253,7 @@ if __name__ == '__main__':
                                         loss_fn = loss_fn,
                                         optimizer = optimizer,
                                         accuracy_fn = accuracy_fn,
+                                        scheduler=None,
                                         device = device)
 
         valid_loss, valid_acc = val_step(model= model,

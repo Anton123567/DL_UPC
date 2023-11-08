@@ -1,5 +1,7 @@
+# Model
 import torch
 import torch.nn as nn
+
 
 class BasicBlock(nn.Module):
     # Scale factor of the number of output channels
