@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 
-
 class BasicBlock(nn.Module):
     # Scale factor of the number of output channels
     expansion = 1
@@ -39,7 +38,7 @@ class BasicBlock(nn.Module):
             Residual block ouput
         """
         identity = x.clone()
-        x = self.conv2((self.conv1(x))) #conv -> conv
+        x = self.conv2((self.conv1(x))) #conv -> dropout -> conv
         x = self.relu(x)
         x = self.bn2(x) # BN lecture: bn after relu is okay, if before use parameters
 
@@ -80,61 +79,44 @@ class RNN(nn.Module):
                             BasicBlock(in_channels=hidden_units*2,
                                        out_channels=hidden_units*2, stride=1, is_first_block=False),
                                        )
-        self.conv_block_2 = nn.Sequential(
-            nn.Conv2d(in_channels=hidden_units*2,
-                      out_channels=hidden_units*4,
-                      kernel_size=1,
-                      stride=1,
-                      padding=0),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2))
 
         self.res_block_2 = nn.Sequential(
-            BasicBlock(in_channels=hidden_units * 4,
-                       out_channels=hidden_units * 4, stride=1, is_first_block=False),
-            BasicBlock(in_channels=hidden_units * 4,
-                       out_channels=hidden_units * 4, stride=1, is_first_block=False),
-            BasicBlock(in_channels=hidden_units * 4,
-                       out_channels=hidden_units * 4, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
         )
-
-        self.conv_block_3 = nn.Sequential(
-                            nn.Conv2d(in_channels=hidden_units*4,
-                                      out_channels=hidden_units*8,
-                                      kernel_size=1,
-                                      stride=1,
-                                      padding=0),
-                            nn.ReLU(),
-                            nn.MaxPool2d(kernel_size=2))
 
         self.dropout = nn.Dropout2d(p=0.05)
 
         self.res_block_3 = nn.Sequential(
-            BasicBlock(in_channels=hidden_units * 8,
-                       out_channels=hidden_units * 8, stride=1, is_first_block=False),
-            BasicBlock(in_channels=hidden_units * 8,
-                       out_channels=hidden_units * 8, stride=1, is_first_block=False),
-            BasicBlock(in_channels=hidden_units * 8,
-                       out_channels=hidden_units * 8, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
+            BasicBlock(in_channels=hidden_units * 2,
+                       out_channels=hidden_units * 2, stride=1, is_first_block=False),
         )
 
-        self.avgpool = nn.AdaptiveAvgPool2d((2, 2))
+        self.avgpool = nn.AdaptiveAvgPool2d((4, 4))
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(in_features=512,
+            nn.Linear(in_features=2048,
                       out_features=64),
-            nn.Dropout2d(p=0.5),
+            nn.Dropout(p=0.5),
             nn.Linear(in_features=64,
                       out_features=output_shape))
 
     def forward(self, x):
         x = self.conv_block_1(x)
         #print(f"After 1. block: {x.shape}")
-        x = self.conv_block_2(self.res_block_1(x))
+        x = self.res_block_1(x)
         x = self.dropout(x)
         #print(f"After res block: {x.shape}")
-        x = self.conv_block_3(self.res_block_2(x))
+        x = self.res_block_2(x)
         x = self.dropout(x)
         #print(f"After res block: {x.shape}")
         x = self.res_block_3(x)

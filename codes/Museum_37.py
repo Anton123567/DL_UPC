@@ -23,9 +23,9 @@ from torch.optim.lr_scheduler import CosineAnnealingLR
 if __name__ == '__main__':
 
     # (HYPER)PARAMETERS
-    BATCH_SIZE = 64  # changed from 8!
+    BATCH_SIZE = 32  # changed from 8!
     NUM_WORKERS = os.cpu_count()
-    LR = 0.0002
+    LR = 0.0001
 
     if not os.path.exists('./../DataProcessed/data_256'):
         # Step 1: Extract the dataset
@@ -72,8 +72,6 @@ if __name__ == '__main__':
 
     augmentations = [
         transforms.RandomHorizontalFlip(p=0.5),
-        transforms.RandomAdjustSharpness(),
-        transforms.RandomErasing(),
         transforms.RandomVerticalFlip(p=0.5),
         transforms.RandomResizedCrop(256, scale=(0.8, 1.0)),  # Random crop with resizing to 64x64
         transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)  # Random color jitter

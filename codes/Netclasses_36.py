@@ -107,7 +107,7 @@ class RNN(nn.Module):
                             nn.ReLU(),
                             nn.MaxPool2d(kernel_size=2))
 
-        self.dropout = nn.Dropout2d(p=0.05)
+        self.dropout = nn.Dropout2d(p=0.2)
 
         self.res_block_3 = nn.Sequential(
             BasicBlock(in_channels=hidden_units * 8,
@@ -122,7 +122,7 @@ class RNN(nn.Module):
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(in_features=512,
+            nn.Linear(in_features=704,
                       out_features=64),
             nn.Dropout2d(p=0.5),
             nn.Linear(in_features=64,
