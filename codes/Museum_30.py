@@ -216,7 +216,7 @@ if __name__ == '__main__':
 
 
     # Set number of epochs
-    NUM_EPOCHS = 60
+    NUM_EPOCHS = 200
 
     model = Netclasses.RNN(input_shape = 3,
                   hidden_units= 16, #changed!
@@ -224,7 +224,7 @@ if __name__ == '__main__':
 
     # Setup loss function and optimizer
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(params=model.parameters(), lr= LR)
+    optimizer = torch.optim.Adadelta(params=model.parameters(), lr= LR)
 
     results = {'epoch': [], 'train_loss': [], 'train_acc': [],
                    'val_loss': [], 'val_acc': []}
