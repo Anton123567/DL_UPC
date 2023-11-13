@@ -1,3 +1,7 @@
+import sys; print('Python %s on %s' % (sys.version, sys.platform))
+sys.path.extend(['/home/anton/Documents/Uni/Deep_Learning'])
+
+
 import os
 import zipfile
 
@@ -17,7 +21,10 @@ from tqdm import tqdm
 from DL_UPC.Netclasses import RNN
 from DL_UPC.cdataset import CustomDataset
 
-device = "cuda"
+
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print(f'Device is {device}.')
 
 LABELMAP = {}
 
@@ -79,7 +86,7 @@ def get_val_loader():
 
 
 # Assuming `MyModel` is the class name of your model.
-model = RNN(3,16,29)
+model = RNN(3,22,29)
 model.to(device)
 
 LR = 0.0001
