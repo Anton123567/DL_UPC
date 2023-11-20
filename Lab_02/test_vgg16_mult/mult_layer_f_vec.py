@@ -103,6 +103,8 @@ def full_network_embedding(model, image_paths, batch_size, target_layer_names, i
 import os
 import tensorflow as tf
 from sklearn.metrics import classification_report, confusion_matrix
+from tensorflow.keras.models import load_model
+
 
 if __name__ == '__main__':
     # This shows an example of calling the full_network_embedding method using
@@ -111,9 +113,10 @@ if __name__ == '__main__':
     # model is straightforward.
 
     # Load model
-    img_width, img_height = 224, 224
-    initial_model = tf.keras.applications.VGG16(weights="imagenet", include_top=True,
-                                                input_shape=(img_width, img_height, 3))
+    img_width, img_height = 256, 256
+    model = load_model('model.h5')
+    initial_model = load_model('model.h5')
+
     target_layer_names = ['block1_conv1', 'block1_conv2', 'block2_conv1', 'block2_conv2', 'block3_conv1',
                           'block3_conv2',
                           'block3_conv3', 'block4_conv1', 'block4_conv2', 'block4_conv3', 'block5_conv1',
@@ -144,8 +147,8 @@ if __name__ == '__main__':
 
     print("Creating train, val, test dfs...")
 
-    train_df = important[important['Subset'] == 'train'].copy().sample(200)
-    val_df = important[important['Subset'] == 'val'].copy().sample(100)
+    train_df = important[important['Subset'] == 'train']
+    val_df = important[important['Subset'] == 'val']
     test_df = important[important['Subset'] == 'test']
 
     train_df = train_df.reset_index(drop=True)
@@ -170,7 +173,7 @@ if __name__ == '__main__':
     print('Total train images:', len(train_images), ' with their corresponding', len(train_labels), 'labels')
     # Parameters for the extraction procedure
     batch_size = 1
-    input_reshape = (224, 224)
+    input_reshape = (256, 256)
     # Call FNE method on the train set
     fne_features, fne_stats_train = full_network_embedding(initial_model, train_images, batch_size,
                                                            target_layer_names, input_reshape)
