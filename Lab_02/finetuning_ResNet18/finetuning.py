@@ -26,19 +26,28 @@ if __name__ == '__main__':
     NUM_WORKERS = os.cpu_count()
     LR = 0.0001
     # Set number of epochs
-    NUM_EPOCHS = 10
+    NUM_EPOCHS = 50
 
+    try:
+        # DATASET DF SETUP
+        dataset = pd.read_csv("./../../../DataMeta/MAMe_dataset.csv")
+        labels = pd.read_csv("./../../../DataMeta/MAMe_labels.csv", header=None)
+        toy_data = pd.read_csv("./../../../DataMeta/MAMe_toy_dataset.csv")
 
-    # DATASET DF SETUP
-    dataset = pd.read_csv("./../../DataMeta/MAMe_dataset.csv")
-    labels = pd.read_csv("./../../DataMeta/MAMe_labels.csv", header=None)
-    toy_data = pd.read_csv("./../../DataMeta/MAMe_toy_dataset.csv")
+        important = dataset[["Image file", "Subset", "Medium"]]
+        important = important.rename(columns={"Medium": "label"})
+        important = important.rename(columns={"Image file": "file_path"})
+        important["file_path"] = important["file_path"].apply(lambda x: "./../../../DataProcessed/data_256/" + str(x))
+    except:
+        # DATASET DF SETUP
+        dataset = pd.read_csv("./../../DataMeta/MAMe_dataset.csv")
+        labels = pd.read_csv("./../../DataMeta/MAMe_labels.csv", header=None)
+        toy_data = pd.read_csv("./../../DataMeta/MAMe_toy_dataset.csv")
 
-    important = dataset[["Image file", "Subset", "Medium"]]
-    important = important.rename(columns={"Medium": "label"})
-    important = important.rename(columns={"Image file": "file_path"})
-    important["file_path"] = important["file_path"].apply(lambda x: "./../DataProcessed/data_256/" + str(x))
-
+        important = dataset[["Image file", "Subset", "Medium"]]
+        important = important.rename(columns={"Medium": "label"})
+        important = important.rename(columns={"Image file": "file_path"})
+        important["file_path"] = important["file_path"].apply(lambda x: "./../../DataProcessed/data_256/" + str(x))
     print("Mapping labels...")
     label_mapper = labels.to_dict()[1]
     label_mapper = {v: k for k, v in label_mapper.items()}
@@ -52,8 +61,8 @@ if __name__ == '__main__':
 
     print("Creating train, val, test dfs...")
 
-    train_df = important[important['Subset'] == 'train'][:100]
-    val_df = important[important['Subset'] == 'val'][:10]
+    train_df = important[important['Subset'] == 'train']
+    val_df = important[important['Subset'] == 'val']
     test_df = important[important['Subset'] == 'test']
 
     train_df = train_df.reset_index(drop=True)
@@ -213,13 +222,21 @@ if __name__ == '__main__':
 
 
     # PRE-TRAINED MODEL
-    model = models.resnet18(pretrained=True)
+    model = torch.load("./../model_resnet18")
+    model.to(device)
+    #model = models.resnet18(pretrained=True)
 
     #vgg
     # model = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', pretrained=True)
 
     # REPLACE THE CLASSIFICATION LAYER
-    model.fc = torch.nn.Linear(in_features=512, out_features=29, bias=True).to(device)
+    model.fc = torch.nn.Sequential(
+        torch.nn.Dropout(p=0.4),
+        torch.nn.Linear(in_features=512, out_features=300, bias=True),
+        torch.nn.ReLU(),
+        torch.nn.Dropout(p=0.4),
+        torch.nn.Linear(in_features=300, out_features=29, bias=True)
+    ).to(device)
 
     # FREEZE SOME LAYERS
     for param in model.parameters(): # freeze all
