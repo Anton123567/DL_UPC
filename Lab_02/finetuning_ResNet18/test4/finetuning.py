@@ -107,7 +107,7 @@ if __name__ == '__main__':
     def train_step(model: torch.nn.Module,
                    data_loader: torch.utils.data.DataLoader,
                    loss_fn: torch.nn.Module,
-                   opt_list, #: [torch.optim.Optimizer],
+                   optimizer: torch.optim.Optimizer,
                    scheduler,
                    accuracy_fn,
                    device: torch.device = device):
@@ -138,16 +138,13 @@ if __name__ == '__main__':
                                      y_pred=y_pred.argmax(dim=1))  # from logits -> prediction labels
 
             # 3. Optimizer zero grad
-            for optimizer in opt_list:
-                optimizer.zero_grad()
-
+            optimizer.zero_grad()
 
             # 4. Loss backward
             loss.backward()
 
             # 5. Update model's parameters with optimizer - once *per batch*
-            for optimizer in opt_list:
-                optimizer.step()
+            optimizer.step()
 
             if scheduler is not None:
                 scheduler.step()
@@ -245,7 +242,7 @@ if __name__ == '__main__':
 
     # FREEZE SOME LAYERS
     for param in model.parameters(): # freeze all
-        param.requires_grad = True
+        param.requires_grad = False
 
     for param in model.layer4.parameters():  # unfreeze last layer
         param.requires_grad = True
@@ -270,14 +267,8 @@ if __name__ == '__main__':
         #                     bias=True)).to(device)
 
     # Setup loss function and optimizer
-    droping_rate = 2
     loss_fn = nn.CrossEntropyLoss()
-    optimizer1 = torch.optim.AdamW(model.layer1.parameters(), lr=LR/droping_rate**4, weight_decay=0.01)
-    optimizer2 = torch.optim.AdamW(model.layer2.parameters(), lr=LR/droping_rate**3, weight_decay=0.01)
-    optimizer3 = torch.optim.AdamW(model.layer3.parameters(), lr=LR/droping_rate**2, weight_decay=0.01)
-    optimizer4 = torch.optim.AdamW(model.layer4.parameters(), lr=LR/droping_rate, weight_decay=0.01)
-    optimizerfc = torch.optim.AdamW(model.fc.parameters(), lr=LR, weight_decay=0.01)
-
+    optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=0.01)
 
     results = {'epoch': [], 'train_loss': [], 'train_acc': [],
                'val_loss': [], 'val_acc': []}
@@ -289,7 +280,7 @@ if __name__ == '__main__':
         training_loss, training_acc = train_step(model=model,
                                                  data_loader=train_loader,
                                                  loss_fn=loss_fn,
-                                                 opt_list=[optimizer4, optimizer2, optimizer3, optimizer1, optimizerfc],
+                                                 optimizer=optimizer,
                                                  scheduler=None,
                                                  accuracy_fn=accuracy_fn,
                                                  device=device)
@@ -315,5 +306,5 @@ if __name__ == '__main__':
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
-                #'optimizer_state_dict': optimizer.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
             }, './results/model_cpt.pth')

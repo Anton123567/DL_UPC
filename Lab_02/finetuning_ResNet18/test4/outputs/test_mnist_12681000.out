@@ -1,0 +1,171 @@
+Mapping labels...
+Creating train, val, test dfs...
+Train df of length 19600, validation df of length 1400 and test df of length 14957 is created.
+Creating dataset and dataLoader with batch size 32 and 160 workers.
+Device is cuda.
+Epoch: 0 
+ --------
+Validation loss:  0.75447 | Validation acc:  75.50 % 
+
+Epoch: 1 
+ --------
+Validation loss:  0.67889 | Validation acc:  78.41 % 
+
+Epoch: 2 
+ --------
+Validation loss:  0.63921 | Validation acc:  79.90 % 
+
+Epoch: 3 
+ --------
+Validation loss:  0.62933 | Validation acc:  80.82 % 
+
+Epoch: 4 
+ --------
+Validation loss:  0.61455 | Validation acc:  81.61 % 
+
+Epoch: 5 
+ --------
+Validation loss:  0.62766 | Validation acc:  81.39 % 
+
+Epoch: 6 
+ --------
+Validation loss:  0.63163 | Validation acc:  80.61 % 
+
+Epoch: 7 
+ --------
+Validation loss:  0.65763 | Validation acc:  80.75 % 
+
+Epoch: 8 
+ --------
+Validation loss:  0.66741 | Validation acc:  80.87 % 
+
+Epoch: 9 
+ --------
+Validation loss:  0.68065 | Validation acc:  80.78 % 
+
+Epoch: 10 
+ --------
+Validation loss:  0.61889 | Validation acc:  82.81 % 
+
+Epoch: 11 
+ --------
+Validation loss:  0.66465 | Validation acc:  82.74 % 
+
+Epoch: 12 
+ --------
+Validation loss:  0.70105 | Validation acc:  81.68 % 
+
+Epoch: 13 
+ --------
+Validation loss:  0.69224 | Validation acc:  81.32 % 
+
+Epoch: 14 
+ --------
+Validation loss:  0.70967 | Validation acc:  81.79 % 
+
+Epoch: 15 
+ --------
+Validation loss:  0.72096 | Validation acc:  82.50 % 
+
+Epoch: 16 
+ --------
+Validation loss:  0.70520 | Validation acc:  83.10 % 
+
+Epoch: 17 
+ --------
+Validation loss:  0.73464 | Validation acc:  82.88 % 
+
+Epoch: 18 
+ --------
+Validation loss:  0.72318 | Validation acc:  82.15 % 
+
+Epoch: 19 
+ --------
+Validation loss:  0.78049 | Validation acc:  81.46 % 
+
+Epoch: 20 
+ --------
+Validation loss:  0.82067 | Validation acc:  82.60 % 
+
+Epoch: 21 
+ --------
+Validation loss:  0.81420 | Validation acc:  80.75 % 
+
+Epoch: 22 
+ --------
+Validation loss:  0.75739 | Validation acc:  82.53 % 
+
+Epoch: 23 
+ --------
+Validation loss:  0.77383 | Validation acc:  81.75 % 
+
+Epoch: 24 
+ --------
+Validation loss:  0.72027 | Validation acc:  82.81 % 
+
+Epoch: 25 
+ --------
+Validation loss:  0.77949 | Validation acc:  82.81 % 
+
+Epoch: 26 
+ --------
+Validation loss:  0.75935 | Validation acc:  83.81 % 
+
+Epoch: 27 
+ --------
+Validation loss:  0.80430 | Validation acc:  82.88 % 
+
+Epoch: 28 
+ --------
+Validation loss:  0.76974 | Validation acc:  82.39 % 
+
+Epoch: 29 
+ --------
+Validation loss:  0.76641 | Validation acc:  82.46 % 
+
+Epoch: 30 
+ --------
+Validation loss:  0.82905 | Validation acc:  83.81 % 
+
+Epoch: 31 
+ --------
+Validation loss:  0.74076 | Validation acc:  83.66 % 
+
+Epoch: 32 
+ --------
+Validation loss:  0.73865 | Validation acc:  84.59 % 
+
+Epoch: 33 
+ --------
+Validation loss:  0.75906 | Validation acc:  84.09 % 
+
+Epoch: 34 
+ --------
+Validation loss:  0.72100 | Validation acc:  84.16 % 
+
+Epoch: 35 
+ --------
+Validation loss:  0.76962 | Validation acc:  83.19 % 
+
+Epoch: 36 
+ --------
+Validation loss:  0.86006 | Validation acc:  82.77 % 
+
+Epoch: 37 
+ --------
+Validation loss:  0.86283 | Validation acc:  82.17 % 
+
+Epoch: 38 
+ --------
+Validation loss:  0.82279 | Validation acc:  82.81 % 
+
+Epoch: 39 
+ --------
+Validation loss:  0.86380 | Validation acc:  81.32 % 
+
+Epoch: 40 
+ --------
+Validation loss:  0.84725 | Validation acc:  83.43 % 
+
+Epoch: 41 
+ --------
