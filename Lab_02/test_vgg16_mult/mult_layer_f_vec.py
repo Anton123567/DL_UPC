@@ -1,3 +1,5 @@
+import pickle
+
 import numpy as np
 import tensorflow as tf
 import cv2
@@ -117,11 +119,16 @@ if __name__ == '__main__':
     model = load_model('model.h5')
     initial_model = load_model('model.h5')
 
-    target_layer_names = ['block1_conv1', 'block1_conv2', 'block2_conv1', 'block2_conv2', 'block3_conv1',
-                          'block3_conv2',
+    #target_layer_names = ['block1_conv1', 'block1_conv2', 'block2_conv1', 'block2_conv2', 'block3_conv1',
+    #                      'block3_conv2',
+    #                      'block3_conv3', 'block4_conv1', 'block4_conv2', 'block4_conv3', 'block5_conv1',
+    #                      'block5_conv2',
+    #                      'block5_conv3', 'fc1', 'fc2']
+
+    target_layer_names = [
                           'block3_conv3', 'block4_conv1', 'block4_conv2', 'block4_conv3', 'block5_conv1',
                           'block5_conv2',
-                          'block5_conv3', 'fc1', 'fc2']
+                          'block5_conv3',]
 
     import pandas as pd
 
@@ -182,8 +189,10 @@ if __name__ == '__main__':
     from sklearn import svm
 
     # Train SVM with the obtained features.
+    train_features = fne_features
     clf = svm.LinearSVC()
-    clf.fit(X=fne_features, y=train_labels)
+    clf.fit(X=train_features, y=train_labels)
+
     print('Done training SVM on extracted features of training set')
 
     fne_features, fne_stats_train = full_network_embedding(initial_model, val_images, batch_size,
@@ -191,6 +200,7 @@ if __name__ == '__main__':
     print('Done extracting features of val set')
 
     # Test SVM with the test set.
+    val_features = fne_features
     predicted_labels = clf.predict(fne_features)
     print('Done testing SVM on extracted features of test set')
 
@@ -203,6 +213,18 @@ if __name__ == '__main__':
     print(classification_report(val_labels, predicted_labels))
     cm = confusion_matrix(val_labels, predicted_labels)
     print(cm)
+
+    with open('train_features.pkl', 'wb') as f:
+        pickle.dump(train_features, f)
+
+    with open('train_labels.pkl', 'wb') as f:
+        pickle.dump(train_labels, f)
+
+    with open('val_features.pkl', 'wb') as f:
+        pickle.dump(val_features, f)  # Assuming val_features is your validation features
+
+    with open('val_labels.pkl', 'wb') as f:
+        pickle.dump(val_labels, f)
 
 
     import matplotlib.pyplot as plt

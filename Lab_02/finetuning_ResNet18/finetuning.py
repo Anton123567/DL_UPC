@@ -83,6 +83,7 @@ if __name__ == '__main__':
     train_transform = transforms.Compose(augmentations + [
         transforms.Resize((256, 256)),
         transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         # transforms.Normalize(mean=[0.3460, 0.3094, 0.2435], std=[0.2309, 0.2221, 0.2056])
     ])
     train_dataset = CustomDataset(train_df, train_transform)
@@ -90,7 +91,9 @@ if __name__ == '__main__':
 
     val_transform = torchvision.transforms.Compose([
         transforms.Resize((256, 256)),
-        torchvision.transforms.ToTensor()])
+        torchvision.transforms.ToTensor(),
+        transforms.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
+    ])
     val_dataset = CustomDataset(val_df, val_transform)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, num_workers=NUM_WORKERS, shuffle=False)
 
@@ -270,13 +273,13 @@ if __name__ == '__main__':
         #                     bias=True)).to(device)
 
     # Setup loss function and optimizer
-    droping_rate = 2
+    droping_rate = 1.5
     loss_fn = nn.CrossEntropyLoss()
     optimizer1 = torch.optim.AdamW(model.layer1.parameters(), lr=LR/droping_rate**4, weight_decay=0.01)
-    optimizer2 = torch.optim.AdamW(model.layer2.parameters(), lr=LR/droping_rate**3, weight_decay=0.01)
-    optimizer3 = torch.optim.AdamW(model.layer3.parameters(), lr=LR/droping_rate**2, weight_decay=0.01)
-    optimizer4 = torch.optim.AdamW(model.layer4.parameters(), lr=LR/droping_rate, weight_decay=0.01)
-    optimizerfc = torch.optim.AdamW(model.fc.parameters(), lr=LR, weight_decay=0.01)
+    optimizer2 = torch.optim.AdamW(model.layer2.parameters(), lr=LR/droping_rate**3, weight_decay=0.03)
+    optimizer3 = torch.optim.AdamW(model.layer3.parameters(), lr=LR/droping_rate**2, weight_decay=0.05)
+    optimizer4 = torch.optim.AdamW(model.layer4.parameters(), lr=LR/droping_rate, weight_decay=0.07)
+    optimizerfc = torch.optim.AdamW(model.fc.parameters(), lr=LR, weight_decay=0.03)
 
 
     results = {'epoch': [], 'train_loss': [], 'train_acc': [],
