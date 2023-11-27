@@ -1,15 +1,24 @@
 import pandas as pd
 
 
+try:
+    dataset = pd.read_csv("./../../DataMeta/MAMe_dataset.csv")
+    labels = pd.read_csv("./../../DataMeta/MAMe_labels.csv", header=None)
+    toy_data = pd.read_csv("./../../DataMeta/MAMe_toy_dataset.csv")
 
-dataset = pd.read_csv("./../../DataMeta/MAMe_dataset.csv")
-labels = pd.read_csv("./../../DataMeta/MAMe_labels.csv", header=None)
-toy_data = pd.read_csv("./../../DataMeta/MAMe_toy_dataset.csv")
+    important = dataset[["Image file", "Subset", "Medium"]]
+    important = important.rename(columns={"Medium": "label"})
+    important = important.rename(columns={"Image file": "file_path"})
+    important["file_path"] = important["file_path"].apply(lambda x: "./../../DataProcessed/data_256/" + str(x))
+except:
+    dataset = pd.read_csv("./../../../DataMeta/MAMe_dataset.csv")
+    labels = pd.read_csv("./../../../DataMeta/MAMe_labels.csv", header=None)
+    toy_data = pd.read_csv("./../../../DataMeta/MAMe_toy_dataset.csv")
 
-important = dataset[["Image file", "Subset", "Medium"]]
-important = important.rename(columns={"Medium": "label"})
-important = important.rename(columns={"Image file": "file_path"})
-important["file_path"] = important["file_path"].apply(lambda x: "./../../DataProcessed/data_256/" + str(x))
+    important = dataset[["Image file", "Subset", "Medium"]]
+    important = important.rename(columns={"Medium": "label"})
+    important = important.rename(columns={"Image file": "file_path"})
+    important["file_path"] = important["file_path"].apply(lambda x: "./../../../DataProcessed/data_256/" + str(x))
 
 print("Mapping labels...")
 label_mapper = labels.to_dict()[1]
@@ -24,8 +33,8 @@ important["label"].astype(int)
 
 print("Creating train, val, test dfs...")
 
-train_df = important[important['Subset'] == 'train']
-val_df = important[important['Subset'] == 'val']
+train_df = important[important['Subset'] == 'train'].sample(100)
+val_df = important[important['Subset'] == 'val'].sample(100)
 test_df = important[important['Subset'] == 'test']
 
 train_df = train_df.reset_index(drop=True)
@@ -71,7 +80,7 @@ def process_images(df, name):
             img_array = load_and_process_image(img_path)
             v = model.predict(img_array)
             feature_df.loc[idx, "embedding"] = v
-            feature_df.to_csv("features_" + name + ".csv")
+            #feature_df.to_csv("features_" + name + ".csv")
             embedding_list.append(v)
             label_list.append(df.loc[idx, "label"])
 

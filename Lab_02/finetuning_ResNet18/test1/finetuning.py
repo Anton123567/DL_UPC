@@ -17,32 +17,37 @@ from cdataset import CustomDataset
 
 import ssl
 import torchvision.models as models
-
 ssl._create_default_https_context = ssl._create_unverified_context
 
 if __name__ == '__main__':
 
     # HYPERPARAMETERS
-    FREEZE_ALL = False
-    FC_SINGLE = False
     BATCH_SIZE = 32
     NUM_WORKERS = os.cpu_count()
     LR = 0.0001
     # Set number of epochs
-    NUM_EPOCHS = 200
+    NUM_EPOCHS = 100
 
-    # DATASET DF SETUP
-    # ONLY ONE .. for Nuray's version!
+    try:
+        # DATASET DF SETUP
+        dataset = pd.read_csv("./../../../DataMeta/MAMe_dataset.csv")
+        labels = pd.read_csv("./../../../DataMeta/MAMe_labels.csv", header=None)
+        toy_data = pd.read_csv("./../../../DataMeta/MAMe_toy_dataset.csv")
 
-    dataset = pd.read_csv("../../DataMeta/MAMe_dataset.csv")
-    labels = pd.read_csv("../../DataMeta/MAMe_labels.csv", header=None)
-    toy_data = pd.read_csv("../../DataMeta/MAMe_toy_dataset.csv")
+        important = dataset[["Image file", "Subset", "Medium"]]
+        important = important.rename(columns={"Medium": "label"})
+        important = important.rename(columns={"Image file": "file_path"})
+        important["file_path"] = important["file_path"].apply(lambda x: "./../../../DataProcessed/data_256/" + str(x))
+    except:
+        # DATASET DF SETUP
+        dataset = pd.read_csv("./../DataMeta/MAMe_dataset.csv")
+        labels = pd.read_csv("./../DataMeta/MAMe_labels.csv", header=None)
+        toy_data = pd.read_csv("./../DataMeta/MAMe_toy_dataset.csv")
 
-    important = dataset[["Image file", "Subset", "Medium"]]
-    important = important.rename(columns={"Medium": "label"})
-    important = important.rename(columns={"Image file": "file_path"})
-    important["file_path"] = important["file_path"].apply(lambda x: "../../DataProcessed/data_256/" + str(x))
-
+        important = dataset[["Image file", "Subset", "Medium"]]
+        important = important.rename(columns={"Medium": "label"})
+        important = important.rename(columns={"Image file": "file_path"})
+        important["file_path"] = important["file_path"].apply(lambda x: "./../DataProcessed/data_256/" + str(x))
     print("Mapping labels...")
     label_mapper = labels.to_dict()[1]
     label_mapper = {v: k for k, v in label_mapper.items()}
@@ -68,16 +73,19 @@ if __name__ == '__main__':
         f"Train df of length {len(train_df)}, validation df of length {len(val_df)} and test df of length {len(test_df)} is created.")
     print(f"Creating dataset and dataLoader with batch size {BATCH_SIZE} and {NUM_WORKERS} workers.")
 
-    augmentations = [transforms.RandomHorizontalFlip(p=0.5),
-                     transforms.RandomVerticalFlip(p=0.5),
-                     transforms.RandomResizedCrop(256, scale=(0.8, 1.0)),  # Random crop with resizing to 64x64
-                     transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)
-                     ]
+    augmentations = []
+        # [
+        #     transforms.RandomHorizontalFlip(p=0.5),
+        #     transforms.RandomVerticalFlip(p=0.5),
+        #     transforms.RandomResizedCrop(256, scale=(0.8, 1.0)),  # Random crop with resizing to 64x64
+        #     transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)  # Random color jitter
+        # ]
 
-    train_transform = transforms.Compose(augmentations + [transforms.Resize((256, 256)),
-                    transforms.ToTensor(),
-                    # transforms.Normalize(mean=[0.3460, 0.3094, 0.2435], std=[0.2309, 0.2221, 0.2056])
-                    ])
+    train_transform = transforms.Compose(augmentations + [
+        transforms.Resize((256, 256)),
+        transforms.ToTensor(),
+        # transforms.Normalize(mean=[0.3460, 0.3094, 0.2435], std=[0.2309, 0.2221, 0.2056])
+    ])
     train_dataset = CustomDataset(train_df, train_transform)
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, num_workers=NUM_WORKERS, shuffle=True)
 
@@ -95,7 +103,7 @@ if __name__ == '__main__':
     print(f'Device is {device}.')
 
 
-    # train step is for ONE epoch
+    #train step is for ONE epoch
 
     def train_step(model: torch.nn.Module,
                    data_loader: torch.utils.data.DataLoader,
@@ -155,8 +163,8 @@ if __name__ == '__main__':
 
         return train_loss, train_acc
 
-        # define validation step
 
+        # define validation step
 
     def val_step(model: torch.nn.Module,
                  data_loader: torch.utils.data.DataLoader,
@@ -190,12 +198,12 @@ if __name__ == '__main__':
 
         return val_loss, val_acc
 
+
         # IN ORDER TO CHECK INPUT-OUTPUT SIZES
         # print("Shape of the input without unsqueeze:", train_features[0].shape)
         # model.eval()
         # with torch.inference_mode():
         #     model(train_features[0].unsqueeze(dim=0).to(device))
-
 
     # Calculate accuracy (a classification metric)
     def accuracy_fn(y_true, y_pred):
@@ -214,35 +222,21 @@ if __name__ == '__main__':
 
 
     # PRE-TRAINED MODEL
-    # model = models.resnet18(pretrained=True) # internet required
-    model = torch.load('./pretrained_resnet18.pth')
-    model = model.to(device)
+    model = torch.load("model_resnet18")
+    model.to(device)
+    #model = models.resnet18(pretrained=True)
 
-    # vgg
+    #vgg
     # model = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', pretrained=True)
 
     # REPLACE THE CLASSIFICATION LAYER
-    if FC_SINGLE:
-        model.fc = torch.nn.Linear(in_features=512, out_features=29, bias=True).to(device)
-    else:
-        model.fc = nn.Sequential(
-                        nn.Flatten(),
-                        nn.Linear(in_features=512,
-                                  out_features=64),
-                        nn.Dropout2d(p=0.5),
-                        nn.Linear(in_features=64,
-                                  out_features=29)).to(device)
+    model.fc = torch.nn.Linear(in_features=512, out_features=29, bias=True).to(device)
 
     # FREEZE SOME LAYERS
-    if FREEZE_ALL:
-        for param in model.parameters():  # freeze all
-            param.requires_grad = False
-        for param in model.fc.parameters():  # unfreeze fc
-            param.requires_grad = True
-        print('All layers are frozen other than the FC.')
-
-    num_train_param = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f'Number of trainable params: {num_train_param}')
+    for param in model.parameters(): # freeze all
+        param.requires_grad = False
+    for param in model.fc.parameters(): # unfreeze fc
+        param.requires_grad = True
 
     # # Recreate the classifier layer and seed it to the target device
     # model.classifier = nn.Sequential(
@@ -253,11 +247,11 @@ if __name__ == '__main__':
     #         nn.Linear(in_features=64,
     #                   out_features=len(label_mapper))).to(device)
 
-    # torch.nn.Sequential(
-    #     torch.nn.Dropout(p=0.2, inplace=True),
-    #     torch.nn.Linear(in_features=1280,
-    #                     out_features=len(label_mapper), # same number of output units as our number of classes
-    #                     bias=True)).to(device)
+        # torch.nn.Sequential(
+        #     torch.nn.Dropout(p=0.2, inplace=True),
+        #     torch.nn.Linear(in_features=1280,
+        #                     out_features=len(label_mapper), # same number of output units as our number of classes
+        #                     bias=True)).to(device)
 
     # Setup loss function and optimizer
     loss_fn = nn.CrossEntropyLoss()
@@ -301,4 +295,3 @@ if __name__ == '__main__':
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
             }, './results/model_cpt.pth')
-            print(f'Last saved model - Epoch: {epoch}, Validation Acc: {valid_acc}, Training Acc: {training_acc}')
