@@ -7,3 +7,6 @@ codes/__pycache__/
 results/model_cpt.pth
 runs/
 __pycache__/
+
+DataMeta/
+DataProcessed/
