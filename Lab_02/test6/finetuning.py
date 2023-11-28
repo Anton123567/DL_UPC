@@ -24,12 +24,12 @@ if __name__ == '__main__':
 
     # HYPERPARAMETERS
     FREEZE_ALL = False
-    FC_SINGLE = False
-    BATCH_SIZE = 64
+    FC_SINGLE = True
+    BATCH_SIZE = 32
     NUM_WORKERS = os.cpu_count()
     LR = 0.0001
     # Set number of epochs
-    NUM_EPOCHS = 100
+    NUM_EPOCHS = 200
 
     # DATASET DF SETUP
     # ONLY ONE .. for Nuray's version!

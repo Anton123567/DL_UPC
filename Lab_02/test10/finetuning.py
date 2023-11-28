@@ -221,18 +221,18 @@ if __name__ == '__main__':
 
     # REPLACE THE CLASSIFICATION LAYER
     if FC_SINGLE:
-        model.fc = torch.nn.Linear(in_features=512, out_features=29, bias=True).to(device)
-        print('Smaller FC: only one layer with 512 -> 29')
+        model.fc = torch.nn.Linear(in_features=2048, out_features=29, bias=True).to(device)
+        print('Smaller FC: only one layer with 2048 -> 29')
     else:
         model.fc = nn.Sequential(
                         nn.Flatten(),
-                        nn.Linear(in_features=512,
+                        nn.Linear(in_features=2048,
                                   out_features=64),
                         torch.nn.ReLU(),
                         nn.Dropout2d(p=0.5),
                         nn.Linear(in_features=64,
                                   out_features=29)).to(device)
-        print('Bigger FC layers, replaced. 2 Linear 512 -> 64 -> 29, dropout of 0.5')
+        print('Bigger FC layers, replaced. 2 Linear 2048 -> 64 -> 29, dropout of 0.5')
 
     # # REPLACE LAYER 4
     # model_nottrained = torch.load('../NOTtrained_resnet18.pth')

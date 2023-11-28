@@ -23,17 +23,14 @@ ssl._create_default_https_context = ssl._create_unverified_context
 if __name__ == '__main__':
 
     # HYPERPARAMETERS
-    FREEZE_ALL = False
-    FC_SINGLE = False
+    FREEZE_ALL = True
     BATCH_SIZE = 64
     NUM_WORKERS = os.cpu_count()
     LR = 0.0001
     # Set number of epochs
-    NUM_EPOCHS = 100
+    NUM_EPOCHS = 200
 
     # DATASET DF SETUP
-    # ONLY ONE .. for Nuray's version!
-
     dataset = pd.read_csv("../../DataMeta/MAMe_dataset.csv")
     labels = pd.read_csv("../../DataMeta/MAMe_labels.csv", header=None)
     toy_data = pd.read_csv("../../DataMeta/MAMe_toy_dataset.csv")
@@ -64,26 +61,28 @@ if __name__ == '__main__':
     val_df = val_df.reset_index(drop=True)
     test_df = test_df.reset_index(drop=True)
 
-    print(
-        f"Train df of length {len(train_df)}, validation df of length {len(val_df)} and test df of length {len(test_df)} is created.")
+    print(f"Train df of length {len(train_df)}, validation df of length {len(val_df)} and test df of length {len(test_df)} is created.")
     print(f"Creating dataset and dataLoader with batch size {BATCH_SIZE} and {NUM_WORKERS} workers.")
 
-    augmentations = [transforms.RandomHorizontalFlip(p=0.5),
-                     transforms.RandomVerticalFlip(p=0.5),
-                     transforms.RandomResizedCrop(256, scale=(0.8, 1.0)),  # Random crop with resizing to 64x64
-                     transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)
-                     ]
+    augmentations = [
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomVerticalFlip(p=0.5),
+            transforms.RandomResizedCrop(256, scale=(0.8, 1.0)),  # Random crop with resizing to 64x64
+            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)  # Random color jitter
+        ]
 
     train_transform = transforms.Compose(augmentations + [transforms.Resize((256, 256)),
                     transforms.ToTensor(),
-                    # transforms.Normalize(mean=[0.3460, 0.3094, 0.2435], std=[0.2309, 0.2221, 0.2056])
+                    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
                     ])
     train_dataset = CustomDataset(train_df, train_transform)
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, num_workers=NUM_WORKERS, shuffle=True)
 
     val_transform = torchvision.transforms.Compose([
         transforms.Resize((256, 256)),
-        torchvision.transforms.ToTensor()])
+        torchvision.transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
     val_dataset = CustomDataset(val_df, val_transform)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, num_workers=NUM_WORKERS, shuffle=False)
 
@@ -215,46 +214,46 @@ if __name__ == '__main__':
 
     # PRE-TRAINED MODEL
     # model = models.resnet18(pretrained=True) # internet required
-    model = torch.load('./pretrained_resnet18.pth')
+    model = torch.load('../pretrained_vgg16.pth')
     model = model.to(device)
 
-    # vgg
-    # model = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', pretrained=True)
-
-    # REPLACE THE CLASSIFICATION LAYER
-    if FC_SINGLE:
-        model.fc = torch.nn.Linear(in_features=512, out_features=29, bias=True).to(device)
-    else:
-        model.fc = nn.Sequential(
-                        nn.Flatten(),
-                        nn.Linear(in_features=512,
-                                  out_features=64),
-                        nn.Dropout2d(p=0.5),
-                        nn.Linear(in_features=64,
-                                  out_features=29)).to(device)
-
+    model.classifier = nn.Sequential(
+                        torch.nn.Linear(in_features=25088, out_features=4096, bias=True),
+                        torch.nn.ReLU(inplace=True),
+                        nn.Dropout2d(p=0.5, inplace=False),
+                        torch.nn.Linear(in_features=4096, out_features=4096, bias=True),
+                        torch.nn.ReLU(inplace=True),
+                        nn.Dropout2d(p=0.5, inplace=False),
+                        nn.Linear(in_features=4096, out_features=29, bias=True)).to(device)
     # FREEZE SOME LAYERS
     if FREEZE_ALL:
         for param in model.parameters():  # freeze all
             param.requires_grad = False
-        for param in model.fc.parameters():  # unfreeze fc
+        for param in model.classifier.parameters():  # unfreeze fc
             param.requires_grad = True
         print('All layers are frozen other than the FC.')
 
-    # # Recreate the classifier layer and seed it to the target device
-    # model.classifier = nn.Sequential(
-    #         nn.Flatten(),
-    #         nn.Linear(in_features=704, # change with the model
-    #                   out_features=64),
-    #         nn.Dropout2d(p=0.5),
-    #         nn.Linear(in_features=64,
-    #                   out_features=len(label_mapper))).to(device)
+    else:
+        # FREEZE SOME LAYERS
+        for param in model.parameters(): # freeze all at first, in the end beginning, layer 1 and 2 frozen
+            param.requires_grad = False
 
-    # torch.nn.Sequential(
-    #     torch.nn.Dropout(p=0.2, inplace=True),
-    #     torch.nn.Linear(in_features=1280,
-    #                     out_features=len(label_mapper), # same number of output units as our number of classes
-    #                     bias=True)).to(device)
+        # for param in model.layer3.parameters():  # unfreeze layer 3
+        #     param.requires_grad = True
+
+        for param in model.layer3.parameters():  # unfreeze layer 3
+            param.requires_grad = True
+
+        for param in model.fc.parameters(): # unfreeze fc -> train from scratch
+            param.requires_grad = True
+
+
+    num_train_param = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f'Number of trainable params: {num_train_param}')
+
+    # from torchinfo import summary
+    # input_size=(32, 3, 256, 256)
+    # summary(model,  col_names=["input_size","output_size", "num_params", "trainable"], input_size= input_size)
 
     # Setup loss function and optimizer
     loss_fn = nn.CrossEntropyLoss()

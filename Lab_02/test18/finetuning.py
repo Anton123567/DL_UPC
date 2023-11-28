@@ -215,7 +215,7 @@ if __name__ == '__main__':
 
     # PRE-TRAINED MODEL
     # model = models.resnet18(pretrained=True) # internet required
-    model = torch.load('./pretrained_resnet18.pth')
+    model = torch.load('../pretrained_resnet18.pth')
     model = model.to(device)
 
     # vgg
@@ -223,23 +223,35 @@ if __name__ == '__main__':
 
     # REPLACE THE CLASSIFICATION LAYER
     if FC_SINGLE:
-        model.fc = torch.nn.Linear(in_features=512, out_features=29, bias=True).to(device)
+        model.fc = torch.nn.Linear(in_features=256, out_features=29, bias=True).to(device)
     else:
         model.fc = nn.Sequential(
                         nn.Flatten(),
-                        nn.Linear(in_features=512,
-                                  out_features=64),
+                        nn.Linear(in_features=256,
+                                  out_features=128),
                         nn.Dropout2d(p=0.5),
-                        nn.Linear(in_features=64,
+                        nn.Linear(in_features=128,
                                   out_features=29)).to(device)
+    class Identity(nn.Module):
+        def __init__(self):
+            super(Identity, self).__init__()
+        def forward(self, x):
+            return x
 
-    # FREEZE SOME LAYERS
-    if FREEZE_ALL:
-        for param in model.parameters():  # freeze all
-            param.requires_grad = False
-        for param in model.fc.parameters():  # unfreeze fc
-            param.requires_grad = True
-        print('All layers are frozen other than the FC.')
+    # delete layer4
+    model.layer4 = Identity().to(device)
+
+    for param in model.parameters():  # freeze all
+        param.requires_grad = False
+
+    for param in model.layer3.parameters():  # unfreeze layer 3
+        param.requires_grad = True
+
+    for param in model.fc.parameters():  # unfreeze fc
+        param.requires_grad = True
+    print('All layers are frozen other than the FC.')
+
+
 
     # # Recreate the classifier layer and seed it to the target device
     # model.classifier = nn.Sequential(
