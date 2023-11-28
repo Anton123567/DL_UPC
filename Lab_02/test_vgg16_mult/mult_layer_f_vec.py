@@ -188,8 +188,7 @@ if __name__ == '__main__':
 
     # Train SVM with the obtained features.
     train_features = fne_features
-    clf = svm.LinearSVC()
-    clf.fit(X=train_features, y=train_labels)
+
 
     print('Done training SVM on extracted features of training set')
 
@@ -199,18 +198,8 @@ if __name__ == '__main__':
 
     # Test SVM with the test set.
     val_features = fne_features
-    predicted_labels = clf.predict(fne_features)
     print('Done testing SVM on extracted features of test set')
 
-
-    # Print results
-    report = classification_report(val_labels, predicted_labels, output_dict=True)#
-    df = pd.DataFrame(report).transpose()
-    df.to_csv("report_svm")
-
-    print(classification_report(val_labels, predicted_labels))
-    cm = confusion_matrix(val_labels, predicted_labels)
-    print(cm)
 
     with open('train_features.pkl', 'wb') as f:
         pickle.dump(train_features, f)
@@ -224,19 +213,9 @@ if __name__ == '__main__':
     with open('val_labels.pkl', 'wb') as f:
         pickle.dump(val_labels, f)
 
+    import try_models
 
-    import matplotlib.pyplot as plt
-    from sklearn.metrics import confusion_matrix
-    import seaborn as sns
 
-    plt.figure(figsize=(10, 7))
-    sns.heatmap(cm, annot=True, fmt='d')
-    plt.title('Confusion Matrix')
-    plt.xlabel('Predicted Labels')
-    plt.ylabel('True Labels')
-
-    # Saving the plot as a PNG file
-    plt.savefig('confusion_matrix.png')
 
 
 

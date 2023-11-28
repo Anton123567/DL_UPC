@@ -11,9 +11,9 @@ try:
     important = important.rename(columns={"Image file": "file_path"})
     important["file_path"] = important["file_path"].apply(lambda x: "./../../DataProcessed/data_256/" + str(x))
 except:
-    dataset = pd.read_csv("./../../../DataMeta/MAMe_dataset.csv")
-    labels = pd.read_csv("./../../../DataMeta/MAMe_labels.csv", header=None)
-    toy_data = pd.read_csv("./../../../DataMeta/MAMe_toy_dataset.csv")
+    dataset = pd.read_csv("../../../DataMeta/MAMe_dataset.csv")
+    labels = pd.read_csv("../../../DataMeta/MAMe_labels.csv", header=None)
+    toy_data = pd.read_csv("../../../DataMeta/MAMe_toy_dataset.csv")
 
     important = dataset[["Image file", "Subset", "Medium"]]
     important = important.rename(columns={"Medium": "label"})
