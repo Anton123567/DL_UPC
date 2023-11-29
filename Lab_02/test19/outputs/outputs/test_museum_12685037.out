@@ -1,0 +1,479 @@
+Mapping labels...
+Creating train, val, test dfs...
+Train df of length 19600, validation df of length 1400 and test df of length 14957 is created.
+Creating dataset and dataLoader with batch size 64 and 160 workers.
+Device is cuda.
+Bigger FC layers, replaced. 2 Linear 2048 -> 128 -> 29, dropout of 0.5
+Number of trainable params: 7233309
+Epoch: 0 
+ --------
+Validation loss:  3.23777 | Validation acc:  20.52 % 
+
+Last saved model - Epoch: 0, Validation Acc: 20.51542207792208, Training Acc: 10.392915309446254
+Epoch: 1 
+ --------
+Validation loss:  2.72111 | Validation acc:  25.77 % 
+
+Last saved model - Epoch: 1, Validation Acc: 25.771103896103895, Training Acc: 21.27951954397394
+Epoch: 2 
+ --------
+Validation loss:  2.39424 | Validation acc:  29.80 % 
+
+Last saved model - Epoch: 2, Validation Acc: 29.799107142857142, Training Acc: 26.60830618892508
+Epoch: 3 
+ --------
+Validation loss:  2.14766 | Validation acc:  39.17 % 
+
+Last saved model - Epoch: 3, Validation Acc: 39.17410714285714, Training Acc: 31.626628664495115
+Epoch: 4 
+ --------
+Validation loss:  1.93491 | Validation acc:  43.86 % 
+
+Last saved model - Epoch: 4, Validation Acc: 43.86160714285714, Training Acc: 36.67548859934853
+Epoch: 5 
+ --------
+Validation loss:  1.79927 | Validation acc:  48.42 % 
+
+Last saved model - Epoch: 5, Validation Acc: 48.41720779220779, Training Acc: 39.90228013029316
+Epoch: 6 
+ --------
+Validation loss:  1.66121 | Validation acc:  50.76 % 
+
+Last saved model - Epoch: 6, Validation Acc: 50.76095779220779, Training Acc: 44.05537459283388
+Epoch: 7 
+ --------
+Validation loss:  1.56718 | Validation acc:  53.31 % 
+
+Last saved model - Epoch: 7, Validation Acc: 53.307629870129865, Training Acc: 46.854641693811075
+Epoch: 8 
+ --------
+Validation loss:  1.46784 | Validation acc:  56.02 % 
+
+Last saved model - Epoch: 8, Validation Acc: 56.0166396103896, Training Acc: 49.53175895765472
+Epoch: 9 
+ --------
+Validation loss:  1.38542 | Validation acc:  59.20 % 
+
+Last saved model - Epoch: 9, Validation Acc: 59.20251623376623, Training Acc: 51.2367671009772
+Epoch: 10 
+ --------
+Validation loss:  1.32754 | Validation acc:  59.35 % 
+
+Last saved model - Epoch: 10, Validation Acc: 59.35470779220779, Training Acc: 53.516897394136805
+Epoch: 11 
+ --------
+Validation loss:  1.24240 | Validation acc:  61.70 % 
+
+Last saved model - Epoch: 11, Validation Acc: 61.69845779220779, Training Acc: 55.44075732899023
+Epoch: 12 
+ --------
+Validation loss:  1.19493 | Validation acc:  64.11 % 
+
+Last saved model - Epoch: 12, Validation Acc: 64.11323051948051, Training Acc: 56.96763029315961
+Epoch: 13 
+ --------
+Validation loss:  1.12100 | Validation acc:  66.10 % 
+
+Last saved model - Epoch: 13, Validation Acc: 66.10186688311688, Training Acc: 58.876221498371336
+Epoch: 14 
+ --------
+Validation loss:  1.09400 | Validation acc:  66.46 % 
+
+Last saved model - Epoch: 14, Validation Acc: 66.45698051948051, Training Acc: 60.545602605863195
+Epoch: 15 
+ --------
+Validation loss:  1.05876 | Validation acc:  67.10 % 
+
+Last saved model - Epoch: 15, Validation Acc: 67.09618506493506, Training Acc: 62.54071661237785
+Epoch: 16 
+ --------
+Validation loss:  1.02561 | Validation acc:  68.94 % 
+
+Last saved model - Epoch: 16, Validation Acc: 68.94277597402596, Training Acc: 63.818200325732896
+Epoch: 17 
+ --------
+Validation loss:  0.99053 | Validation acc:  70.22 % 
+
+Last saved model - Epoch: 17, Validation Acc: 70.22118506493506, Training Acc: 65.10586319218241
+Epoch: 18 
+ --------
+Validation loss:  0.96329 | Validation acc:  70.80 % 
+
+Last saved model - Epoch: 18, Validation Acc: 70.79951298701299, Training Acc: 65.99144951140065
+Epoch: 19 
+ --------
+Validation loss:  0.92711 | Validation acc:  71.93 % 
+
+Last saved model - Epoch: 19, Validation Acc: 71.92573051948051, Training Acc: 67.39108306188925
+Epoch: 20 
+ --------
+Validation loss:  0.89100 | Validation acc:  73.08 % 
+
+Last saved model - Epoch: 20, Validation Acc: 73.08238636363636, Training Acc: 68.62276058631922
+Epoch: 21 
+ --------
+Validation loss:  0.86982 | Validation acc:  73.64 % 
+
+Last saved model - Epoch: 21, Validation Acc: 73.64042207792208, Training Acc: 69.7577361563518
+Epoch: 22 
+ --------
+Validation loss:  0.85853 | Validation acc:  72.92 % 
+
+Last saved model - Epoch: 22, Validation Acc: 72.9200487012987, Training Acc: 70.74002442996742
+Epoch: 23 
+ --------
+Validation loss:  0.84571 | Validation acc:  74.70 % 
+
+Last saved model - Epoch: 23, Validation Acc: 74.69561688311688, Training Acc: 71.47801302931596
+Epoch: 24 
+ --------
+Validation loss:  0.83434 | Validation acc:  75.26 % 
+
+Last saved model - Epoch: 24, Validation Acc: 75.2637987012987, Training Acc: 72.73513843648209
+Epoch: 25 
+ --------
+Validation loss:  0.78907 | Validation acc:  76.63 % 
+
+Last saved model - Epoch: 25, Validation Acc: 76.63352272727273, Training Acc: 73.42223127035831
+Epoch: 26 
+ --------
+Validation loss:  0.77934 | Validation acc:  75.56 % 
+
+Last saved model - Epoch: 26, Validation Acc: 75.55803571428572, Training Acc: 73.76832247557003
+Epoch: 27 
+ --------
+Validation loss:  0.75496 | Validation acc:  76.12 % 
+
+Last saved model - Epoch: 27, Validation Acc: 76.11607142857143, Training Acc: 74.86258143322476
+Epoch: 28 
+ --------
+Validation loss:  0.78043 | Validation acc:  75.33 % 
+
+Last saved model - Epoch: 28, Validation Acc: 75.33482142857143, Training Acc: 75.78379478827361
+Epoch: 29 
+ --------
+Validation loss:  0.75418 | Validation acc:  77.11 % 
+
+Last saved model - Epoch: 29, Validation Acc: 77.1103896103896, Training Acc: 76.24185667752442
+Epoch: 30 
+ --------
+Validation loss:  0.72810 | Validation acc:  77.69 % 
+
+Last saved model - Epoch: 30, Validation Acc: 77.68871753246754, Training Acc: 76.9035016286645
+Epoch: 31 
+ --------
+Validation loss:  0.72828 | Validation acc:  77.90 % 
+
+Last saved model - Epoch: 31, Validation Acc: 77.90178571428572, Training Acc: 77.13762214983713
+Epoch: 32 
+ --------
+Validation loss:  0.70550 | Validation acc:  78.46 % 
+
+Last saved model - Epoch: 32, Validation Acc: 78.45982142857143, Training Acc: 78.34385179153094
+Epoch: 33 
+ --------
+Validation loss:  0.73071 | Validation acc:  77.75 % 
+
+Last saved model - Epoch: 33, Validation Acc: 77.74959415584415, Training Acc: 78.60342019543974
+Epoch: 34 
+ --------
+Validation loss:  0.72007 | Validation acc:  77.39 % 
+
+Last saved model - Epoch: 34, Validation Acc: 77.39448051948051, Training Acc: 79.1021986970684
+Epoch: 35 
+ --------
+Validation loss:  0.74053 | Validation acc:  76.83 % 
+
+Last saved model - Epoch: 35, Validation Acc: 76.8262987012987, Training Acc: 79.13782573289902
+Epoch: 36 
+ --------
+Validation loss:  0.66960 | Validation acc:  78.97 % 
+
+Last saved model - Epoch: 36, Validation Acc: 78.96712662337663, Training Acc: 79.19381107491857
+Epoch: 37 
+ --------
+Validation loss:  0.65763 | Validation acc:  80.04 % 
+
+Last saved model - Epoch: 37, Validation Acc: 80.04261363636364, Training Acc: 79.90635179153094
+Epoch: 38 
+ --------
+Validation loss:  0.64742 | Validation acc:  80.46 % 
+
+Last saved model - Epoch: 38, Validation Acc: 80.4586038961039, Training Acc: 80.75631107491857
+Epoch: 39 
+ --------
+Validation loss:  0.68692 | Validation acc:  79.19 % 
+
+Last saved model - Epoch: 39, Validation Acc: 79.1903409090909, Training Acc: 81.14820846905538
+Epoch: 40 
+ --------
+Validation loss:  0.68183 | Validation acc:  78.10 % 
+
+Last saved model - Epoch: 40, Validation Acc: 78.10470779220779, Training Acc: 81.3619706840391
+Epoch: 41 
+ --------
+Validation loss:  0.66229 | Validation acc:  79.69 % 
+
+Last saved model - Epoch: 41, Validation Acc: 79.6875, Training Acc: 81.71315146579805
+Epoch: 42 
+ --------
+Validation loss:  0.65854 | Validation acc:  80.03 % 
+
+Last saved model - Epoch: 42, Validation Acc: 80.03246753246754, Training Acc: 81.9828990228013
+Epoch: 43 
+ --------
+Validation loss:  0.65612 | Validation acc:  79.61 % 
+
+Last saved model - Epoch: 43, Validation Acc: 79.60633116883118, Training Acc: 82.06942182410424
+Epoch: 44 
+ --------
+Validation loss:  0.64702 | Validation acc:  80.03 % 
+
+Last saved model - Epoch: 44, Validation Acc: 80.03246753246754, Training Acc: 82.35952768729642
+Epoch: 45 
+ --------
+Validation loss:  0.61797 | Validation acc:  81.53 % 
+
+Last saved model - Epoch: 45, Validation Acc: 81.5340909090909, Training Acc: 82.5529315960912
+Epoch: 46 
+ --------
+Validation loss:  0.61713 | Validation acc:  81.39 % 
+
+Last saved model - Epoch: 46, Validation Acc: 81.39204545454545, Training Acc: 83.08224755700326
+Epoch: 47 
+ --------
+Validation loss:  0.64788 | Validation acc:  80.11 % 
+
+Last saved model - Epoch: 47, Validation Acc: 80.11363636363636, Training Acc: 83.22984527687296
+Epoch: 48 
+ --------
+Validation loss:  0.64451 | Validation acc:  80.17 % 
+
+Last saved model - Epoch: 48, Validation Acc: 80.17451298701299, Training Acc: 83.47414495114006
+Epoch: 49 
+ --------
+Validation loss:  0.63210 | Validation acc:  80.18 % 
+
+Last saved model - Epoch: 49, Validation Acc: 80.1846590909091, Training Acc: 84.26811889250814
+Epoch: 50 
+ --------
+Validation loss:  0.61417 | Validation acc:  81.46 % 
+
+Last saved model - Epoch: 50, Validation Acc: 81.46306818181819, Training Acc: 83.95765472312704
+Epoch: 51 
+ --------
+Validation loss:  0.63266 | Validation acc:  81.24 % 
+
+Last saved model - Epoch: 51, Validation Acc: 81.2398538961039, Training Acc: 84.24267100977198
+Epoch: 52 
+ --------
+Validation loss:  0.62059 | Validation acc:  80.25 % 
+
+Last saved model - Epoch: 52, Validation Acc: 80.24553571428572, Training Acc: 84.92467426710098
+Epoch: 53 
+ --------
+Validation loss:  0.59985 | Validation acc:  81.25 % 
+
+Last saved model - Epoch: 53, Validation Acc: 81.25, Training Acc: 84.81270358306189
+Epoch: 54 
+ --------
+Validation loss:  0.63013 | Validation acc:  80.73 % 
+
+Last saved model - Epoch: 54, Validation Acc: 80.7325487012987, Training Acc: 85.21478013029316
+Epoch: 55 
+ --------
+Validation loss:  0.60635 | Validation acc:  82.23 % 
+
+Last saved model - Epoch: 55, Validation Acc: 82.23417207792208, Training Acc: 85.36746742671009
+Epoch: 56 
+ --------
+Validation loss:  0.62280 | Validation acc:  81.25 % 
+
+Last saved model - Epoch: 56, Validation Acc: 81.25, Training Acc: 85.89169381107492
+Epoch: 57 
+ --------
+Validation loss:  0.61556 | Validation acc:  80.45 % 
+
+Last saved model - Epoch: 57, Validation Acc: 80.44845779220779, Training Acc: 85.85097719869707
+Epoch: 58 
+ --------
+Validation loss:  0.58732 | Validation acc:  81.67 % 
+
+Last saved model - Epoch: 58, Validation Acc: 81.66599025974027, Training Acc: 85.59140879478828
+Epoch: 59 
+ --------
+Validation loss:  0.58544 | Validation acc:  82.81 % 
+
+Last saved model - Epoch: 59, Validation Acc: 82.8125, Training Acc: 86.31412866449512
+Epoch: 60 
+ --------
+Validation loss:  0.59710 | Validation acc:  82.24 % 
+
+Last saved model - Epoch: 60, Validation Acc: 82.24431818181819, Training Acc: 86.19197882736157
+Epoch: 61 
+ --------
+Validation loss:  0.57442 | Validation acc:  82.81 % 
+
+Last saved model - Epoch: 61, Validation Acc: 82.8125, Training Acc: 86.89942996742671
+Epoch: 62 
+ --------
+Validation loss:  0.60569 | Validation acc:  81.82 % 
+
+Last saved model - Epoch: 62, Validation Acc: 81.81818181818181, Training Acc: 87.06738599348535
+Epoch: 63 
+ --------
+Validation loss:  0.59065 | Validation acc:  81.39 % 
+
+Last saved model - Epoch: 63, Validation Acc: 81.39204545454545, Training Acc: 86.76201140065146
+Epoch: 64 
+ --------
+Validation loss:  0.60510 | Validation acc:  81.59 % 
+
+Last saved model - Epoch: 64, Validation Acc: 81.59496753246754, Training Acc: 87.41347719869707
+Epoch: 65 
+ --------
+Validation loss:  0.60223 | Validation acc:  82.16 % 
+
+Last saved model - Epoch: 65, Validation Acc: 82.16314935064935, Training Acc: 87.44401465798046
+Epoch: 66 
+ --------
+Validation loss:  0.56010 | Validation acc:  82.53 % 
+
+Last saved model - Epoch: 66, Validation Acc: 82.5284090909091, Training Acc: 87.56107491856677
+Epoch: 67 
+ --------
+Validation loss:  0.59011 | Validation acc:  82.95 % 
+
+Last saved model - Epoch: 67, Validation Acc: 82.95454545454545, Training Acc: 87.5
+Epoch: 68 
+ --------
+Validation loss:  0.59169 | Validation acc:  82.03 % 
+
+Last saved model - Epoch: 68, Validation Acc: 82.03125, Training Acc: 87.8918973941368
+Epoch: 69 
+ --------
+Validation loss:  0.58431 | Validation acc:  82.66 % 
+
+Last saved model - Epoch: 69, Validation Acc: 82.66030844155844, Training Acc: 87.91225570032573
+Epoch: 70 
+ --------
+Validation loss:  0.61973 | Validation acc:  82.10 % 
+
+Last saved model - Epoch: 70, Validation Acc: 82.10227272727273, Training Acc: 88.15655537459283
+Epoch: 71 
+ --------
+Validation loss:  0.59413 | Validation acc:  82.58 % 
+
+Last saved model - Epoch: 71, Validation Acc: 82.5791396103896, Training Acc: 88.19727198697069
+Epoch: 72 
+ --------
+Validation loss:  0.60077 | Validation acc:  82.87 % 
+
+Last saved model - Epoch: 72, Validation Acc: 82.87337662337663, Training Acc: 88.19727198697069
+Epoch: 73 
+ --------
+Validation loss:  0.60381 | Validation acc:  82.80 % 
+
+Last saved model - Epoch: 73, Validation Acc: 82.8023538961039, Training Acc: 88.68587133550488
+Epoch: 74 
+ --------
+Validation loss:  0.60439 | Validation acc:  82.80 % 
+
+Last saved model - Epoch: 74, Validation Acc: 82.8023538961039, Training Acc: 88.89454397394137
+Epoch: 75 
+ --------
+Validation loss:  0.58005 | Validation acc:  82.81 % 
+
+Last saved model - Epoch: 75, Validation Acc: 82.8125, Training Acc: 88.99633550488599
+Epoch: 76 
+ --------
+Validation loss:  0.60742 | Validation acc:  81.52 % 
+
+Last saved model - Epoch: 76, Validation Acc: 81.5239448051948, Training Acc: 89.1439332247557
+Epoch: 77 
+ --------
+Validation loss:  0.57755 | Validation acc:  83.30 % 
+
+Last saved model - Epoch: 77, Validation Acc: 83.29951298701299, Training Acc: 89.23045602605863
+Epoch: 78 
+ --------
+Validation loss:  0.59485 | Validation acc:  82.53 % 
+
+Last saved model - Epoch: 78, Validation Acc: 82.5284090909091, Training Acc: 89.6172638436482
+Epoch: 79 
+ --------
+Validation loss:  0.56783 | Validation acc:  82.72 % 
+
+Last saved model - Epoch: 79, Validation Acc: 82.72118506493506, Training Acc: 89.65289087947883
+Epoch: 80 
+ --------
+Validation loss:  0.56818 | Validation acc:  82.87 % 
+
+Last saved model - Epoch: 80, Validation Acc: 82.87337662337663, Training Acc: 89.68342833876221
+Epoch: 81 
+ --------
+Validation loss:  0.56759 | Validation acc:  82.74 % 
+
+Last saved model - Epoch: 81, Validation Acc: 82.74147727272727, Training Acc: 89.78013029315962
+Epoch: 82 
+ --------
+Validation loss:  0.55747 | Validation acc:  83.59 % 
+
+Last saved model - Epoch: 82, Validation Acc: 83.59375, Training Acc: 90.07532573289902
+Epoch: 83 
+ --------
+Validation loss:  0.58982 | Validation acc:  83.02 % 
+
+Last saved model - Epoch: 83, Validation Acc: 83.01542207792208, Training Acc: 90.04478827361564
+Epoch: 84 
+ --------
+Validation loss:  0.58935 | Validation acc:  83.08 % 
+
+Last saved model - Epoch: 84, Validation Acc: 83.0762987012987, Training Acc: 90.13640065146579
+Epoch: 85 
+ --------
+Validation loss:  0.60141 | Validation acc:  83.09 % 
+
+Last saved model - Epoch: 85, Validation Acc: 83.0864448051948, Training Acc: 90.46722312703584
+Epoch: 86 
+ --------
+Validation loss:  0.59187 | Validation acc:  83.23 % 
+
+Last saved model - Epoch: 86, Validation Acc: 83.22849025974027, Training Acc: 90.25855048859935
+Epoch: 87 
+ --------
+Validation loss:  0.56820 | Validation acc:  83.88 % 
+
+Last saved model - Epoch: 87, Validation Acc: 83.8778409090909, Training Acc: 90.53847719869707
+Epoch: 88 
+ --------
+Validation loss:  0.61102 | Validation acc:  83.80 % 
+
+Last saved model - Epoch: 88, Validation Acc: 83.79667207792208, Training Acc: 90.81840390879479
+Epoch: 89 
+ --------
+Validation loss:  0.59772 | Validation acc:  82.86 % 
+
+Last saved model - Epoch: 89, Validation Acc: 82.86323051948051, Training Acc: 90.57410423452768
+Epoch: 90 
+ --------
+Validation loss:  0.57037 | Validation acc:  84.38 % 
+
+Last saved model - Epoch: 90, Validation Acc: 84.375, Training Acc: 91.0474348534202
+Epoch: 91 
+ --------
+Validation loss:  0.56889 | Validation acc:  83.94 % 
+
+Last saved model - Epoch: 91, Validation Acc: 83.93871753246754, Training Acc: 90.97109120521172
+Epoch: 92 
+ --------
+Validation loss:  0.56586 | Validation acc:  84.30 % 
+
+Last saved model - Epoch: 92, Validation Acc: 84.30397727272727, Training Acc: 91.46478013029316
+Epoch: 93 
+ --------
+Validation loss:  0.59806 | Validation acc:  83.59 % 
+
+Last saved model - Epoch: 93, Validation Acc: 83.59375, Training Acc: 91.41388436482085
+Epoch: 94 
+ --------
